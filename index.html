@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>设备清单 · 制片工作台</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#f5f6f7;--card:#fff;--text:#26292e;--text-sec:#62666e;--text-thi:#6b7078;--blue:#2c2f34;--blue-h:#191c20;--border:#dee1e5;--border-l:#eff1f3;--green:#347253;--orange:#9a651e;--red:#b7483b;--shadow-sm:0 2px 6px #20222606;--shadow-md:0 8px 30px #20222607;--shadow-lg:0 24px 80px #20222624;--radius:16px;--radius-sm:8px;--radius-lg:20px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;--space-xs:.25rem;--space-sm:.5rem;--space-md:.75rem;--space-lg:1rem;--space-xl:1.5rem;--space-2xl:2rem;--space-3xl:3rem;--type-meta:.75rem;--type-data:.8125rem;--type-ui:.875rem;--type-body:1rem;--type-section:1.25rem;--type-title:1.75rem;--type-display:2.25rem;--page-gutter:2.5rem;--sidebar:232px;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:var(--type-body);line-height:1.6;}
+button,input,select{font:inherit;}button{cursor:pointer;}button:disabled{cursor:not-allowed;opacity:.5;}button,input,select{transition:background .18s,border-color .18s,box-shadow .18s;}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid #ac4538;outline-offset:3px;}[hidden]{display:none!important;}
+.navbar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);z-index:600;background:#202226;color:#e1e4e8;display:flex;flex-direction:column;border-right:1px solid #30343a;padding:var(--space-2xl) var(--space-lg) var(--space-xl);overflow-y:auto;}
+.nav-brand{display:flex;align-items:center;color:#f2f4f6;line-height:1.4;gap:var(--space-md);padding:0 var(--space-md) var(--space-2xl);font-size:1.125rem;font-weight:600;letter-spacing:0;}
+.brand-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#b54b3c;color:#ffffff;flex-shrink:0;}.brand-icon svg{width:22px;height:22px;}
+.nav-brand .subtitle{display:block;color:#a6acb6;margin-top:5px;font-weight:400;font-size:.6875rem;letter-spacing:.08em;line-height:1.5;}
+.nav-label{color:#9fa6b1;font-size:var(--type-meta);letter-spacing:.04em;padding:0 var(--space-lg);margin:var(--space-lg) 0 var(--space-sm);}
+.nav-actions{display:flex;flex-direction:column;gap:var(--space-xs);}.nav-item{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:8px;text-align:left;background:transparent;color:#c0c6d0;padding:var(--space-md) var(--space-lg);font-size:var(--type-ui);min-height:44px;line-height:1.5;}
+.nav-item svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;}.nav-item:hover{background:#ffffff09;color:#fff;}.nav-item.active{background:#383033;color:#f2d8d2;font-weight:600;}.nav-item.active::after{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;margin-left:auto;}
+.nav-divider{border-top:1px solid #ffffff10;margin:22px 8px 12px;}.sidebar-bottom{margin-top:auto;padding:var(--space-2xl) var(--space-md) 0;}.sidebar-note{color:#a9afb9;font-size:var(--type-meta);line-height:1.8;margin-bottom:var(--space-xl);}.sidebar-note strong{display:block;color:#dce1e7;font-weight:500;}
+.status-line{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}.status-indicator{font-size:var(--type-meta);}.account-actions{display:flex;gap:8px;margin-top:12px;}.account-actions .btn{background:#ffffff0b;color:#e1e4e8;font-size:var(--type-ui);padding:var(--space-sm) var(--space-md);}.sidebar-footer{color:#a2a9b4;font-size:.6875rem;letter-spacing:.04em;margin-top:var(--space-xl);line-height:1.8;}
+.workspace{margin-left:var(--sidebar);min-width:0;}.workspace-header{border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafbfc;height:64px;padding:0 var(--page-gutter);gap:var(--space-xl);}.breadcrumb{display:flex;align-items:center;gap:12px;color:var(--text-sec);font-size:var(--type-ui);}.breadcrumb strong{color:var(--text);font-weight:500;}
+.container{margin:0 auto;min-width:0;max-width:1536px;padding:var(--space-2xl) var(--page-gutter) var(--space-3xl);}.page-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-xl);margin-bottom:var(--space-xl);}.page-heading h1{font-weight:600;font-size:var(--type-title);letter-spacing:0;line-height:1.4;}.page-heading p{color:var(--text-sec);font-size:var(--type-ui);margin-top:var(--space-sm);}.page-date{color:var(--text-sec);white-space:nowrap;font-size:var(--type-meta);}
+.btn{border:1px solid transparent;border-radius:var(--radius-sm);font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;line-height:1.5;font-size:var(--type-ui);padding:10px var(--space-lg);min-height:44px;}.btn-primary{background:var(--blue);color:#fff;}.btn-primary:hover{background:var(--blue-h);box-shadow:0 3px 8px #191c2020;}.btn-secondary{background:#fff;color:var(--text);border-color:var(--border);}.btn-secondary:hover{background:#f2f4f6;border-color:#c5cbd3;}.btn-ghost{background:transparent;color:var(--text-sec);}.btn-ghost:hover{background:var(--border-l);color:var(--text);}.btn-success{background:var(--green);color:#fff;}.btn-success:hover{background:#285a40;}.button-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.home-view{width:100%;max-width:1160px;margin:0 auto;}.home-hero{display:grid;border:1px solid #dee2e7;border-radius:var(--radius);background:#eef0f3;grid-template-columns:minmax(0,1.3fr) minmax(260px,1fr);gap:var(--space-3xl);min-height:0;overflow:visible;}.hero-copy{align-self:center;padding:var(--space-2xl) 0 var(--space-2xl) var(--space-2xl);}.home-title{font-size:var(--type-display);font-weight:600;letter-spacing:0;line-height:1.4;}.home-title em{font-style:normal;color:#ac4538;}.home-subtitle{color:#606772;font-size:var(--type-body);line-height:1.75;max-width:32em;margin-top:var(--space-lg);}.home-actions{display:flex;align-items:center;gap:var(--space-sm);margin-top:var(--space-xl);flex-wrap:wrap;}.home-primary{padding:11px 20px;}.home-secondary{color:#914439;}
+.hero-workflow{position:relative;align-self:center;display:flex;flex-direction:column;padding:0 var(--space-2xl) 0 0;gap:0;margin:var(--space-2xl) 0;list-style:none;}.workflow-item{display:flex;align-items:center;gap:var(--space-lg);padding:var(--space-lg) 0;background:transparent;border:0;border-radius:0;box-shadow:none;}.workflow-number{color:#914439;font-family:inherit;font-size:var(--type-ui);font-weight:500;font-variant-numeric:tabular-nums;min-width:24px;}.workflow-item strong{display:block;font-weight:600;font-size:var(--type-ui);}.workflow-item small{color:var(--text-sec);font-size:var(--type-data);display:block;margin-top:var(--space-xs);}
+.output-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 var(--space-2xl);background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;gap:var(--space-xl);}.guide-item{display:flex;align-items:flex-start;padding:var(--space-xl) 0;gap:0;}.guide-item+.guide-item{border-left:0;}.guide-item strong{font-weight:600;font-size:var(--type-ui);}.guide-item p{color:var(--text-sec);font-size:var(--type-data);margin-top:var(--space-xs);}
+.history-panel{width:100%;}.history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:var(--space-lg);}.history-title{font-weight:600;font-size:var(--type-section);}.history-caption{color:var(--text-sec);font-size:var(--type-data);margin-top:var(--space-xs);}.history-clear{border:0;background:transparent;color:var(--text-sec);font-size:var(--type-ui);min-height:44px;padding:var(--space-sm);}.history-clear:hover{color:var(--red);}.history-empty,.empty-state{text-align:center;border:1px dashed #d3d8e0;border-radius:12px;background:#fafbfc;color:var(--text-sec);padding:var(--space-2xl) var(--space-xl);font-size:var(--type-ui);line-height:1.8;}.empty-state strong{display:block;color:var(--text);font-size:1rem;font-weight:500;margin-bottom:6px;}.empty-state.error{border-color:#e4c8c2;background:#fff9f7;}.empty-state .btn{margin-top:16px;}.history-item{width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;text-align:left;color:var(--text);display:flex;justify-content:space-between;gap:18px;padding:var(--space-lg) var(--space-xl);margin-top:var(--space-sm);}.history-item:hover{border-color:#b4bdca;background:#fdfefe;}.history-item strong{display:block;margin-bottom:4px;overflow-wrap:anywhere;font-size:var(--type-body);}.history-item span{color:var(--text-sec);font-size:var(--type-data);}.history-arrow{align-self:center;font-size:1.25rem;color:var(--blue);}
+.wizard-layout{display:grid;justify-content:center;align-items:start;grid-template-columns:176px minmax(0,760px);gap:var(--space-2xl);}.wizard-rail{padding:var(--space-sm) 0;position:sticky;top:var(--space-xl);}.step-list{list-style:none;display:flex;flex-direction:column;gap:3px;}.step-item{display:flex;align-items:center;border-radius:8px;color:var(--text-sec);gap:var(--space-md);padding:var(--space-md) var(--space-sm);font-size:var(--type-data);}.step-number{border:1px solid #d6dce4;border-radius:50%;display:grid;place-items:center;background:#fff;flex-shrink:0;width:24px;height:24px;font-size:var(--type-meta);}.step-item.current{background:#f5e9e6;color:#843f35;font-weight:600;}.step-item.current .step-number{background:var(--blue);border-color:var(--blue);color:#fff;}.step-item.done{color:var(--green);}.step-item.done .step-number{background:#e9f0e3;color:var(--green);border-color:#dce6d3;}
+.wizard-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;min-width:0;padding:var(--space-2xl);box-shadow:none;min-height:560px;}.wizard-header{margin-bottom:var(--space-xl);}.wizard-progress{display:flex;gap:5px;margin-bottom:24px;}.progress-dot{flex:1;height:3px;background:#e7ebef;border-radius:4px;}.progress-dot.active{background:var(--blue);}.progress-dot.done{background:#ca9a90;}.wizard-step-info{color:var(--text-sec);font-weight:500;font-size:var(--type-meta);letter-spacing:0;margin-bottom:var(--space-sm);}.wizard-question{font-weight:600;font-size:1.5rem;letter-spacing:0;line-height:1.4;margin-bottom:var(--space-sm);}.wizard-hint{color:var(--text-sec);font-size:var(--type-ui);line-height:1.7;}.wizard-body{flex:1;min-width:0;}.wizard-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-l);margin-top:var(--space-2xl);padding-top:var(--space-xl);}
+.form-group{margin-bottom:var(--space-xl);min-width:0;}.form-group label{display:block;font-weight:500;font-size:var(--type-ui);margin-bottom:var(--space-sm);}.form-input,.form-select{width:100%;min-width:0;border:1px solid #dce2e9;border-radius:var(--radius-sm);background:#fdfefe;color:var(--text);font-size:var(--type-body);padding:10px var(--space-md);min-height:44px;}.form-input::placeholder{color:var(--text-sec);}.form-input:focus,.form-select:focus{border-color:#a96c61;background:#fff;outline:2px solid #a75b4e;outline-offset:2px;box-shadow:none;}.form-select,.status-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='none' stroke='%2362666e' stroke-width='1.5' d='m3 4 3 3 3-3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:33px;}
+.option-row,.tag-group,.number-options{display:flex;flex-wrap:wrap;gap:8px;}.option-pill,.tag-item{border:1px solid var(--border);border-radius:7px;cursor:pointer;font-weight:500;background:#fff;color:var(--text-sec);user-select:none;font-size:var(--type-ui);padding:10px var(--space-lg);min-height:44px;display:inline-flex;align-items:center;max-width:100%;overflow-wrap:anywhere;}.option-pill:hover,.tag-item:hover,.number-option:hover{border-color:#b98b82;background:#f7f8fa;}.option-pill.selected,.tag-item.active,.number-option.selected{border-color:#a75b4e;background:#f9edea;color:#843d34;box-shadow:inset 0 0 0 1px #a75b4e;}.number-option{border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:500;cursor:pointer;background:#fff;width:44px;height:44px;font-size:var(--type-ui);}
+.search-select{position:relative;}.search-select-input{padding:11px 14px;border:1px solid var(--border);border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fdfefe;font-size:var(--type-body);min-height:48px;}.search-select-input.open{border-color:#a96c61;box-shadow:none;outline:2px solid #a75b4e;outline-offset:2px;}.search-select-placeholder,.search-select-arrow{color:var(--text-sec);}.search-select-input.open .search-select-arrow{transform:rotate(180deg);}.search-select-dropdown{display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:50;max-height:370px;overflow:hidden;flex-direction:column;}.search-select-dropdown.open{display:flex;}.search-select-search{padding:13px 16px;border:0;border-bottom:1px solid var(--border-l);outline:none;min-width:0;font-size:var(--type-body);min-height:44px;}.search-select-options{flex:1;overflow-y:auto;max-height:240px;}.search-select-option{padding:10px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:44px;font-size:var(--type-ui);}.search-select-option:hover{background:#f4f6f8;}.tag-c,.tag-r{padding:2px 7px;border-radius:4px;background:#eaf1e4;color:var(--green);white-space:nowrap;font-size:var(--type-meta);}.tag-r{background:#faf0df;color:var(--orange);}.search-select-custom{padding:11px 12px;border-top:1px solid var(--border-l);display:flex;gap:8px;}.search-select-custom input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:var(--type-body);min-height:44px;}.search-select-custom button{padding:7px 12px;background:var(--blue);color:#fff;border:0;border-radius:6px;white-space:nowrap;font-size:var(--type-ui);min-height:44px;}.lighting-config{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:8px;gap:var(--space-lg);}.lighting-item label{font-size:.8125rem;color:var(--text-sec);margin-bottom:6px;display:block;}.section-divider{height:1px;background:var(--border-l);margin:22px 0;}.sub-question{font-weight:500;font-size:var(--type-ui);margin-bottom:var(--space-md);}
+.preview-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);min-width:0;padding:var(--space-2xl);box-shadow:none;}.preview-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:var(--space-xl);margin-bottom:var(--space-xl);}.preview-header h2{font-weight:600;overflow-wrap:anywhere;font-size:var(--type-title);letter-spacing:0;line-height:1.4;}.preview-description{color:var(--text-sec);font-size:var(--type-ui);margin-top:var(--space-sm);}.export-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;}.preview-footer{display:flex;justify-content:space-between;gap:16px;color:var(--text-sec);font-size:var(--type-meta);margin-top:var(--space-lg);}.preview-footer span{line-height:1.8;}.table-controls{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space-lg);margin:var(--space-xl) 0 var(--space-lg);align-items:flex-start;}.tabs{display:flex;gap:3px;background:#f0f2f5;border-radius:9px;padding:4px;width:fit-content;max-width:100%;}.tab{border:1px solid transparent;background:transparent;color:var(--text-sec);font-weight:500;border-radius:6px;white-space:nowrap;font-size:var(--type-ui);padding:var(--space-sm) var(--space-md);min-height:44px;}.tab.active{background:#fff;color:#3c4654;border-color:#dde3eb;box-shadow:var(--shadow-sm);}.tab .badge{display:inline-block;background:#e1e6ed;color:#495463;padding:0 6px;border-radius:4px;min-width:18px;text-align:center;font-size:var(--type-meta);margin-left:var(--space-sm);}.table-note{font-size:.75rem;color:var(--text-sec);}
+.table-wrap{overflow:auto;max-height:65vh;border-radius:9px;border:1px solid var(--border);scrollbar-gutter:stable;}.table-wrap:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}table{width:100%;border-collapse:separate;border-spacing:0;min-width:760px;font-size:var(--type-data);line-height:1.65;}table thead th{position:sticky;top:0;z-index:2;background:#f0f2f5;color:#555e6b;text-align:left;white-space:nowrap;border-bottom:1px solid #dbe1e8;font-size:var(--type-meta);font-weight:600;padding:var(--space-md) var(--space-lg);}table th.center,table td.center{text-align:center;}table td.right,table th.right{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}table tbody td{border-bottom:1px solid var(--border-l);vertical-align:middle;padding:var(--space-md) var(--space-lg);}table tbody tr:last-child td{border-bottom:0;}table tr.data-row:nth-child(even){background:#fafbfc;}table tr.data-row:hover{background:#f2f5f8;}table tr.section-row td{background:#e8ecf1;color:#495463;font-weight:600;border-bottom:1px solid #d7dfe9;font-size:var(--type-data);padding:var(--space-sm) var(--space-lg);letter-spacing:0;}.section-count{font-weight:400;color:#626d7c;font-size:var(--type-meta);margin-left:var(--space-md);}.equipment-table td:nth-child(1){min-width:85px;color:var(--text-sec);font-size:var(--type-meta);}.equipment-table td:nth-child(2){min-width:165px;font-weight:600;}.equipment-table td:nth-child(5),.equipment-table td:nth-child(6){min-width:150px;max-width:310px;overflow-wrap:anywhere;color:var(--text-sec);}.rental-table{min-width:1220px;}.rental-table td:nth-child(10){min-width:180px;max-width:230px;overflow-wrap:anywhere;color:var(--text-sec);font-size:.75rem;}.source-company{color:var(--green);}.source-rental{color:var(--orange);}.source-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:5px;font-weight:500;white-space:nowrap;font-size:var(--type-meta);}.source-badge::before{content:"";width:4px;height:4px;background:currentColor;border-radius:50%;}.source-badge.source-company{background:#eaf2e4;}.source-badge.source-rental{background:#fbf0dd;}.summary-row td{background:#e9edf3;font-weight:600;border-top:1px solid #cdd6e3;padding:16px 14px;}.summary-row .amount{font-size:1.125rem;color:#39485e;}.table-empty{padding:38px;color:var(--text-sec);text-align:center;}
+.stats-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--border);border-radius:10px;background:#fafbfc;overflow:hidden;margin-bottom:8px;}.stat-card{min-width:0;padding:var(--space-lg) var(--space-xl);}.stat-card+.stat-card{border-left:1px solid var(--border);}.stat-card .label{color:var(--text-sec);font-weight:500;font-size:var(--type-data);}.stat-card .value{line-height:1.4;font-variant-numeric:tabular-nums;font-size:1.875rem;font-weight:500;letter-spacing:-.02em;margin-top:var(--space-xs);}.stat-card .value.green{color:var(--green);}.stat-card .value.orange{color:var(--orange);}.stat-card .value.blue{color:var(--blue);}.stat-card .sub{color:var(--text-sec);font-size:var(--type-meta);margin-top:var(--space-xs);}.inventory-stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:22px;}.filter-bar{display:flex;flex-wrap:wrap;gap:var(--space-md);margin-bottom:var(--space-lg);}.filter-bar .form-select{width:auto;padding-top:8px;padding-bottom:8px;font-size:var(--type-ui);min-height:44px;}.filter-bar .form-input{padding-top:8px;padding-bottom:8px;font-size:var(--type-ui);min-height:44px;width:260px;}.filter-bar .search-input{margin-left:auto;}.price-info{font-size:.75rem;color:var(--text-sec);margin-top:12px;padding:12px 15px;background:#f6f8fa;border-radius:8px;border:1px solid #e0e6ed;}.price-info strong{color:var(--blue);}.edit-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:12px;padding:12px 14px;background:#f2f5f8;border:1px solid #dce5ee;border-radius:8px;}.edit-toolbar .info{font-size:.8125rem;color:var(--blue);}.edit-toolbar .actions{display:flex;gap:8px;flex-wrap:wrap;}table tbody td input,table tbody td select{width:100%;min-width:65px;border:1px solid #d8e1ed;background:#fff;font-size:.8125rem;color:var(--text);padding:6px 7px;border-radius:5px;}table tbody td input:focus,table tbody td select:focus{outline:2px solid #aa6255;outline-offset:1px;}table tbody td:nth-child(2) input{min-width:150px;}.row-actions{display:flex;gap:5px;justify-content:center;}.row-action-btn{border:1px solid var(--border);background:#fff;color:var(--text-sec);border-radius:6px;font-size:1rem;display:flex;align-items:center;justify-content:center;width:36px;height:36px;}.row-action-btn:hover{background:#f5e9e6;color:var(--blue);}.row-action-btn.danger:hover{background:#fff1ed;border-color:#e5bbb0;color:var(--red);}table tbody td .status-select{padding:5px 27px 5px 9px;font-size:.75rem;font-weight:500;background-color:#f9fbfd;min-width:96px;}.status-select.opt-available{color:var(--green);}.status-select.opt-checkedout{color:var(--orange);}.status-select.opt-repair{color:var(--red);}.status-select.opt-scrapped{color:var(--text-sec);}
+.modal-overlay{display:none;position:fixed;inset:0;background:#181c2366;backdrop-filter:blur(4px);z-index:700;justify-content:center;align-items:center;padding:24px;}.modal-overlay.active{display:flex;}.modal{background:#fff;width:560px;max-width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);padding:var(--space-2xl);border:0;border-radius:16px;}.modal h2{font-weight:600;margin-bottom:24px;letter-spacing:0;font-size:1.5rem;}#priceDBModal .modal{width:900px;}.modal .table-wrap{max-height:42vh;}.modal table{min-width:500px;}.toast{position:fixed;bottom:24px;background:#2c333e;color:#fff;padding:12px 20px;border-radius:10px;z-index:900;box-shadow:var(--shadow-lg);max-width:calc(100vw - 32px);pointer-events:none;left:calc(50% + var(--sidebar) / 2);transform:translate(-50%,16px);visibility:hidden;opacity:0;transition:transform .2s,opacity .2s,visibility .2s;font-size:var(--type-ui);}.toast.show{transform:translate(-50%,0);visibility:visible;opacity:1;}.review-grid{background:#f7f8fa;border:1px solid #e0e7ef;border-radius:10px;padding:var(--space-xl);}.review-grid .title{font-size:16px;font-weight:600;margin-bottom:16px;}.review-grid .row{display:grid;gap:8px 16px;border-bottom:1px solid #e6ecf3;overflow-wrap:anywhere;font-size:var(--type-ui);grid-template-columns:100px minmax(0,1fr);padding:var(--space-sm) 0;}.review-grid .row .label{color:var(--text-sec);}
+::-webkit-scrollbar{width:7px;height:7px;}::-webkit-scrollbar-thumb{background:#c9d1dc;border-radius:8px;}::-webkit-scrollbar-track{background:#f5f7fa;}
+
+/* Content rhythm: 4 / 8 / 12 / 16 / 24 / 32 / 48. Operate-mode typography. */
+h1,h2,.wizard-question{text-wrap:balance;}p,.preview-description,.history-caption{text-wrap:pretty;}
+::selection{background:#f0d8d1;color:var(--text);}input,select{caret-color:var(--blue);}
+.workflow-item+.workflow-item{border-top:1px solid var(--border);}
+.rail-title{font-size:var(--type-ui);font-weight:600;margin:0 var(--space-sm) var(--space-lg);}
+.project-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-xl);}
+.project-fields .form-group{margin:0;}.project-fields .field-wide{grid-column:1/-1;}
+.project-fields .option-pill{padding-inline:var(--space-md);}
+.number-options{gap:var(--space-sm);}.preview-header>div:first-child{min-width:0;flex:1 1 320px;}
+.history-item>div{min-width:0;}.history-item span{overflow-wrap:anywhere;}
+.default-config{position:relative;padding:var(--space-lg) var(--space-xl);border:1px solid var(--border);border-radius:var(--radius-sm);background:#f6f8fa;margin-bottom:var(--space-xl);}
+.default-config strong{display:block;font-size:var(--type-body);font-weight:600;margin-bottom:var(--space-xs);}
+.default-config p{font-size:var(--type-ui);color:var(--text-sec);line-height:1.7;}
+.default-config .source-badge{margin-top:var(--space-sm);}
+.nav-heading{display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);}
+.nav-panel{display:flex;flex:1;flex-direction:column;}
+.mobile-nav-toggle{display:none;}
+.import-view{max-width:1120px;margin-inline:auto;}
+.import-intro{max-width:65ch;color:var(--text-sec);font-size:var(--type-ui);}
+.import-input-panel{padding:var(--space-xl) 0;border-bottom:1px solid var(--border);}
+.import-project-fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:var(--space-lg);}
+.import-text{font:inherit;line-height:1.8;min-height:240px;resize:vertical;white-space:pre-wrap;}
+.import-help{font-size:var(--type-data);color:var(--text-sec);margin-top:var(--space-sm);}
+.import-review-head{display:flex;gap:var(--space-lg);align-items:center;justify-content:space-between;flex-wrap:wrap;margin:var(--space-xl) 0;}
+.import-review-head h2{font-size:var(--type-section);}
+.import-review-head .form-select{width:auto;}
+.import-review-controls{display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);flex-wrap:wrap;margin-bottom:var(--space-md);}
+.import-row{padding:var(--space-xl) 0;border-top:1px solid var(--border);}
+.import-main-fields{display:grid;grid-template-columns:minmax(0,1fr) 88px 88px 130px;gap:var(--space-md);}
+.import-row label,.import-project-fields label{display:block;font-size:var(--type-ui);font-weight:500;margin-bottom:var(--space-sm);}
+.import-row .form-group{margin-bottom:var(--space-md);}
+.import-details{margin-top:var(--space-md);}
+.import-details summary{min-height:44px;padding:10px 0;cursor:pointer;color:var(--text-sec);font-size:var(--type-ui);}
+.import-details summary:focus-visible{outline:3px solid #ac4538;outline-offset:2px;}
+.import-extra-fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-lg);margin-top:var(--space-md);}
+.import-raw{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--border-l);border-radius:var(--radius-sm);padding:var(--space-md);font-size:var(--type-data);color:var(--text-sec);margin-top:var(--space-md);}
+.import-issues{font-size:var(--type-data);color:#80521a;padding:var(--space-sm) 0;overflow-wrap:anywhere;}
+.import-issues:empty{display:none;}
+.import-confirm{display:flex!important;gap:var(--space-sm);align-items:center;min-height:44px;margin:0!important;font-weight:400!important;}
+.import-confirm input{width:20px;height:20px;accent-color:var(--blue);flex-shrink:0;}
+.import-row-actions{display:flex;align-items:center;justify-content:space-between;gap:var(--space-lg);margin-top:var(--space-sm);}
+.import-candidates:empty{display:none;}
+.import-candidates{margin-top:var(--space-md);}
+.import-footer{position:sticky;bottom:0;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:var(--space-lg);padding:var(--space-lg) 0;background:var(--bg);border-top:1px solid var(--border);}
+.import-notice{border:1px solid #e0ceb2;background:#fff8ed;color:#80521a;border-radius:var(--radius-sm);padding:var(--space-md) var(--space-lg);font-size:var(--type-ui);margin:var(--space-lg) 0;overflow-wrap:anywhere;}
+.import-notice:empty{display:none;}
+.source-pending{background:#f3e8d3;color:#80521a;}
+.import-preview-tools{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-md);margin-bottom:var(--space-lg);}
+.import-preview-tools .form-select{width:auto;max-width:100%;}
+.import-preview-tools label{font-size:var(--type-ui);}
+.equipment-hint{color:var(--text-sec);font-size:var(--type-ui);margin-bottom:var(--space-lg);}
+.equipment-rows{display:grid;gap:var(--space-lg);margin:var(--space-lg) 0;}
+.equipment-row{display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:var(--space-md);align-items:end;}
+.equipment-row>div,.equipment-card{min-width:0;}
+.equipment-row label,.equipment-quantity label{display:block;font-size:var(--type-ui);color:var(--text-sec);margin-bottom:6px;overflow-wrap:anywhere;}
+.equipment-quantity{max-width:180px;}
+.lighting-config{grid-template-columns:1fr;}
+.equipment-card{display:grid;grid-template-columns:minmax(0,1fr) 110px;align-items:end;gap:var(--space-md);padding:var(--space-lg);border:1px solid var(--border);border-radius:var(--radius-sm);background:#fdfefe;}
+.equipment-card>div{min-width:0;}
+.equipment-light-row{grid-template-columns:100px minmax(0,1fr) 90px auto;}
+.equipment-audio-row{grid-template-columns:minmax(0,1fr) 180px;align-items:center;border-bottom:1px solid var(--border-l);padding-bottom:var(--space-lg);}
+.equipment-name{overflow-wrap:anywhere;}.equipment-name .source-badge{margin-left:var(--space-sm);}
+@media(max-width:540px){
+  .equipment-row,.equipment-light-row{grid-template-columns:minmax(0,1fr) auto;}
+  .equipment-row>div:first-child,.equipment-light-row>div:nth-child(2){grid-column:1/-1;}
+  .equipment-card{grid-template-columns:1fr;}
+  .equipment-audio-row{grid-template-columns:1fr;}.equipment-row .btn{justify-self:end;}
+}
+@media(max-width:960px){
+  #importReview{scroll-margin-top:88px;}
+  .import-project-fields{grid-template-columns:1fr 1fr;}
+  .import-project-fields .form-group:first-child{grid-column:1/-1;}
+  .import-main-fields{grid-template-columns:1fr 1fr;}
+  .import-main-fields>div:first-child{grid-column:1/-1;}
+  .import-main-fields>div:last-child{grid-column:1/-1;}
+  .import-extra-fields{grid-template-columns:1fr;}
+  .import-footer{flex-wrap:wrap;padding-bottom:max(var(--space-lg),env(safe-area-inset-bottom));}
+  .import-footer .button-group{width:100%;}.import-footer .btn{flex:1;min-height:48px;white-space:normal;}
+  .import-row-actions{gap:var(--space-sm);}
+  .import-review-head .button-group{width:100%;}
+  .import-review-head .form-select{max-width:100%;}
+}
+@media(max-width:1200px){
+  :root{--sidebar:208px;--page-gutter:1.5rem;}
+  .navbar{padding:var(--space-xl) var(--space-md);}.nav-brand{padding-inline:var(--space-sm);}
+  .home-hero{gap:var(--space-xl);grid-template-columns:minmax(0,1.2fr) minmax(220px,1fr);}
+  .hero-copy{padding:var(--space-xl) 0 var(--space-xl) var(--space-xl);}.hero-workflow{padding-right:var(--space-xl);}
+  .home-title{font-size:2rem;}.home-subtitle{font-size:var(--type-ui);}
+  .wizard-layout{grid-template-columns:160px minmax(0,1fr);gap:var(--space-xl);}
+  .wizard-card,.preview-card{padding:var(--space-xl);}
+  .table-controls{flex-direction:column;align-items:stretch;}.export-actions{justify-content:flex-start;}
+  .stat-card{padding:var(--space-lg);}.project-fields{grid-template-columns:1fr;}
+}
+@media(max-width:960px){
+  :root{--sidebar:192px;}
+  .nav-item{padding:var(--space-md);}.nav-brand{gap:var(--space-sm);}
+  .nav-brand .subtitle{font-size:.6875rem;letter-spacing:0;}
+  .wizard-layout{display:block;max-width:760px;margin-inline:auto;}.wizard-rail{display:none;}
+  .home-hero{grid-template-columns:1fr;gap:0;}.hero-copy{padding:var(--space-2xl);}
+  .hero-workflow{display:none;}.output-guide{grid-template-columns:1fr;gap:0;}
+  .guide-item{padding:var(--space-lg) 0;}.guide-item+.guide-item{border-top:1px solid var(--border-l);}
+  .stats-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .stat-card:nth-child(3){border-left:0;}.stat-card:nth-child(n+3){border-top:1px solid var(--border);}
+  .inventory-stats{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .inventory-stats .stat-card:nth-child(3){border-left:1px solid var(--border);border-top:0;}
+  .filter-bar .search-input{margin-left:0;flex:1 1 220px;}
+  .page-heading{align-items:flex-start;flex-wrap:wrap;gap:var(--space-sm);}
+  .lighting-config{grid-template-columns:1fr;}.preview-header .button-group{width:100%;}
+}
+@media(max-width:960px){
+  :root{--sidebar:0px;--page-gutter:1rem;}
+  .navbar{position:sticky;top:0;width:100%;padding:var(--space-sm) max(var(--space-lg),env(safe-area-inset-right)) var(--space-sm) max(var(--space-lg),env(safe-area-inset-left));padding-top:max(var(--space-sm),env(safe-area-inset-top));overflow:visible;border-right:0;}
+  .nav-brand{padding:0;font-size:var(--type-body);min-width:0;}
+  .nav-brand>div{min-width:0;}
+  .nav-brand .subtitle{letter-spacing:.06em;font-size:.6875rem;margin-top:2px;overflow-wrap:anywhere;}
+  .mobile-nav-toggle{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-sm);min-width:76px;min-height:48px;flex-shrink:0;padding:var(--space-sm) var(--space-md);color:#e1e4e8;background:transparent;border:1px solid #646b75;border-radius:var(--radius-sm);font-size:var(--type-ui);}
+  .mobile-nav-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;}
+  .mobile-nav-toggle .menu-close{display:none;}
+  .navbar.is-open .menu-lines{display:none;}.navbar.is-open .menu-close{display:block;}
+  .nav-panel{display:none;position:absolute;top:100%;inset-inline:0;background:#202226;padding:var(--space-md) max(var(--space-lg),env(safe-area-inset-right)) max(var(--space-lg),env(safe-area-inset-bottom)) max(var(--space-lg),env(safe-area-inset-left));max-height:calc(100dvh - var(--mobile-nav-height,64px));overflow-y:auto;overscroll-behavior:contain;border-top:1px solid #42474f;box-shadow:0 16px 24px #20222626;}
+  .navbar.is-open .nav-panel{display:flex;}
+  .nav-label,.nav-divider,.sidebar-note,.sidebar-footer{display:none;}
+  .nav-actions{display:flex;gap:var(--space-xs);}
+  .nav-item{min-width:0;min-height:48px;padding:var(--space-md);gap:var(--space-md);font-size:var(--type-ui);line-height:1.5;justify-content:flex-start;}
+  .nav-item svg{width:18px;height:18px;}
+  .sidebar-bottom{margin-top:var(--space-md);padding:var(--space-lg) 0 0;border-top:1px solid #42474f;display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);}
+  .account-actions{margin:0;}.status-indicator{font-size:var(--type-meta);}
+  .workspace-header{height:auto;min-height:60px;padding:var(--space-sm) var(--page-gutter);gap:var(--space-sm);}
+  .breadcrumb{gap:var(--space-sm);font-size:var(--type-data);}
+  .workspace-header .btn{padding:var(--space-sm);font-size:var(--type-data);}
+  body[data-page="home"] .workspace-header{display:none;}
+  .container{padding:var(--space-xl) max(var(--page-gutter),env(safe-area-inset-right)) max(var(--space-2xl),env(safe-area-inset-bottom)) max(var(--page-gutter),env(safe-area-inset-left));}
+  .page-heading h1{font-size:1.5rem;}.page-heading p{font-size:var(--type-ui);}
+  .page-date{font-size:var(--type-meta);}.home-hero{border-radius:12px;grid-template-columns:minmax(0,1fr);}
+  .hero-copy{padding:var(--space-xl);min-width:0;}.home-title{font-size:1.75rem;}
+  .home-subtitle{font-size:var(--type-ui);line-height:1.8;}.home-actions{margin-top:var(--space-xl);}
+  .home-actions .btn{width:100%;padding:var(--space-md);font-size:var(--type-ui);min-height:48px;white-space:normal;}
+  .output-guide{margin-bottom:var(--space-xl);}
+  .history-head{align-items:flex-start;gap:var(--space-sm);}
+  .history-caption{max-width:22em;}.history-empty,.empty-state{padding:var(--space-xl) var(--space-lg);}
+  .history-item{padding:var(--space-lg);}
+  .wizard-card,.preview-card{padding:var(--space-xl) var(--space-lg);border-radius:12px;}
+  .wizard-card{min-height:520px;}.wizard-question{font-size:1.375rem;}
+  .wizard-header{scroll-margin-top:88px;}
+  .wizard-footer{position:sticky;bottom:0;z-index:5;gap:var(--space-md);margin:var(--space-xl) calc(-1 * var(--space-lg)) calc(-1 * var(--space-xl));padding:var(--space-md) var(--space-lg) max(var(--space-md),env(safe-area-inset-bottom));background:var(--card);border-radius:0 0 12px 12px;box-shadow:0 -6px 18px #20222608;}
+  .wizard-footer .btn{min-height:48px;flex:1;}.wizard-footer #nextBtn{flex:2;}
+  .search-select-dropdown{max-height:min(370px,55dvh);}
+  .search-select-options{min-height:0;overscroll-behavior:contain;}
+  .search-select-input>span:first-child{min-width:0;overflow-wrap:anywhere;}
+  .number-option{width:44px;height:44px;}.option-pill,.tag-item{padding:10px var(--space-md);}
+  .preview-header h2{font-size:1.5rem;}.preview-header{gap:var(--space-lg);}
+  .preview-header>div:first-child{flex-basis:100%;}
+  .stat-card{padding:var(--space-lg) var(--space-md);}.stat-card .value{font-size:1.5rem;overflow-wrap:anywhere;}
+  .stat-card .label,.stat-card .sub{font-size:var(--type-meta);}
+  .inventory-stats .stat-card{padding:var(--space-md) var(--space-sm);}
+  .table-controls{gap:var(--space-md);}
+  .tabs{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-xs);padding:var(--space-xs);}
+  .tab{font-size:var(--type-data);padding:var(--space-sm) var(--space-xs);min-width:0;}
+  .tab .badge{font-size:var(--type-meta);margin-left:var(--space-xs);padding:0 4px;}
+  .export-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;}
+  .export-actions .btn{font-size:var(--type-ui);padding:var(--space-sm);}
+  .filter-bar .form-input{width:100%;flex:1 1 100%;font-size:var(--type-body);}
+  .filter-bar .form-select{flex:1;min-width:0;font-size:var(--type-body);}
+  .preview-footer{flex-direction:column;gap:var(--space-xs);}
+  .row-action-btn{width:44px;height:44px;}table tbody td input,table tbody td select{font-size:var(--type-body);min-height:44px;}
+  .mobile-records{max-height:none;overflow:visible;scrollbar-gutter:auto;border:0;border-radius:0;}
+  .mobile-records table{display:block;min-width:0;width:100%;}
+  .mobile-records thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+  .mobile-records tbody{display:block;}
+  .mobile-records .data-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-md) var(--space-lg);padding:var(--space-lg) 0;border-bottom:1px solid var(--border);background:transparent;}
+  .mobile-records .data-row:nth-child(even),.mobile-records .data-row:hover{background:transparent;}
+  .mobile-records .data-row td{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-xs);padding:0;border:0;min-width:0;max-width:none;text-align:left;white-space:normal;overflow-wrap:anywhere;font-size:var(--type-ui);font-weight:400;}
+  .mobile-records .data-row td::before{content:attr(data-label);color:var(--text-sec);font-size:var(--type-meta);font-weight:400;}
+  .mobile-records .data-row td.mobile-record-wide{grid-column:1/-1;}
+  .mobile-records .data-row td.mobile-record-title{font-size:var(--type-body);font-weight:600;color:var(--text);}
+  .mobile-records .data-row td input,.mobile-records .data-row td select{width:100%;max-width:100%;}
+  .mobile-records .section-row{display:block;margin-top:var(--space-xl);}
+  .mobile-records .section-row:first-child{margin-top:0;}
+  .mobile-records .section-row td{display:block;min-width:0;max-width:none;padding:var(--space-sm) var(--space-md);border:0;border-radius:var(--radius-sm);}
+  .mobile-records .summary-row{display:grid;grid-template-columns:minmax(0,1fr) auto;margin-top:var(--space-lg);padding:var(--space-lg);background:#e9edf3;border-radius:var(--radius-sm);}
+  .mobile-records .summary-row td{display:block;min-width:0;max-width:none;padding:0;border:0;white-space:normal;text-align:left;}
+  .mobile-records .summary-row td:first-child{grid-column:1/-1;margin-bottom:var(--space-sm);}
+  .mobile-records .summary-row td:last-child{font-weight:400;color:var(--text-sec);}
+  .edit-toolbar .actions{width:100%;}.edit-toolbar .actions .btn{flex:1;white-space:normal;}
+  .modal-overlay{padding:var(--space-lg) 0 0;align-items:flex-end;}
+  .modal{width:100%;padding:var(--space-xl) max(var(--space-lg),env(safe-area-inset-right)) max(var(--space-xl),env(safe-area-inset-bottom)) max(var(--space-lg),env(safe-area-inset-left));max-height:calc(100dvh - var(--space-lg));border-radius:16px 16px 0 0;overscroll-behavior:contain;}
+  body:has(.modal-overlay.active){overflow:hidden;}
+  #priceDBContent table{min-width:0;table-layout:fixed;}
+  #priceDBContent th:first-child{width:55%;}
+  #priceDBContent td{overflow-wrap:anywhere;white-space:normal;}
+  .modal .btn{min-height:48px;}
+  .toast{left:50%;bottom:max(var(--space-xl),env(safe-area-inset-bottom));max-width:calc(100vw - 32px);font-size:var(--type-ui);}
+  body[data-page="wizard"] .toast{bottom:calc(88px + env(safe-area-inset-bottom));}
+  .review-grid{padding:var(--space-lg);}.review-grid .row{grid-template-columns:80px minmax(0,1fr);gap:var(--space-sm);}
+}
+@media(max-width:540px){.tab{display:flex;flex-direction:column;align-items:center;gap:var(--space-xs);white-space:normal;}.tab .badge{margin:0;}}
+@media(max-width:360px){.nav-heading,.nav-brand{gap:8px;}.nav-brand .subtitle{display:none;}.mobile-nav-toggle{gap:8px;padding-inline:12px;}.hero-copy{padding:var(--space-lg);}.home-title{font-size:1.5rem;}.breadcrumb>span{display:none;}.review-grid .row{grid-template-columns:1fr;gap:var(--space-xs);}}
+@media(pointer:coarse){.row-action-btn{width:44px;height:44px;}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+</style>
+</head>
+<body data-page="home">
+<nav class="navbar" aria-label="主导航">
+  <div class="nav-heading">
+  <div class="nav-brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 10h18M7 5l3 5m4-5 3 5M8 14h8M8 17h5"/></svg></span><div>设备清单<span class="subtitle">PRODUCTION DESK</span></div></div>
+  <button class="mobile-nav-toggle" id="mobileNavToggle" aria-expanded="false" aria-controls="navPanel" onclick="setMobileNav(this.getAttribute('aria-expanded')!=='true')"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="menu-lines" d="M4 6h16M4 12h16M4 18h16"/><path class="menu-close" d="m5 5 14 14M5 19 19 5"/></svg><span>菜单</span></button>
+  </div>
+  <div class="nav-panel" id="navPanel">
+  <div class="nav-label">工作空间</div>
+  <div class="nav-actions">
+    <button class="nav-item active" data-page="home" onclick="showPage('home')" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3zM9 20v-7h6v7"/></svg>项目工作台</button>
+    <button class="nav-item" data-page="wizard" onclick="startNewProject()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8m-4 4v6m-3-3h6"/></svg>新建清单</button>
+    <button class="nav-item" data-page="import" onclick="showPage('import')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H5v17h14V4h-4M9 2h6v5H9zM8 12h8M8 16h6"/></svg>粘贴清单</button>
+  </div>
+  <div class="sidebar-bottom"><div class="sidebar-note"><strong>让每一次拍摄，准备就绪。</strong>本地整理 · 无需登录<br>设备来源请在生成后确认。</div><div class="sidebar-footer">PRODUCTION DESK · 0.1.0<br>© 2026 DexFrame</div></div>
+  </div>
+</nav>
+<div class="workspace">
+<header class="workspace-header"><div class="breadcrumb"><span>工作空间</span><span aria-hidden="true">/</span><strong id="pageLabel">项目工作台</strong></div><button class="btn btn-secondary" onclick="showPage('home')">返回工作台 ↗</button></header>
+<main class="container">
+  <div id="homeView" class="home-view">
+    <div class="page-heading"><div><h1>项目工作台</h1><p>把拍摄需求，整理成一份清晰的设备清单。</p></div><span class="page-date" id="workspaceDate"></span></div>
+    <section class="home-hero">
+      <div class="hero-copy"><h2 class="home-title">好作品，<br>从<em>准备就绪</em>开始。</h2><p class="home-subtitle">配置机位、镜头与拍摄附件。<br>确认设备来源，生成公司设备表、租赁询价单与设备总表。</p><div class="home-actions"><button class="btn btn-primary home-primary" onclick="startNewProject()">＋ 新建拍摄项目</button><button class="btn btn-secondary" onclick="showPage('import')">粘贴已有清单</button><button class="btn btn-ghost home-secondary" onclick="toggleHistory()">查看历史项目 ↓</button></div></div>
+      <ol class="hero-workflow" aria-label="清单准备流程"><li class="workflow-item"><span class="workflow-number">01</span><div><strong>定义拍摄需求</strong><small>项目 · 城市 · 天数 · 机位</small></div></li><li class="workflow-item"><span class="workflow-number">02</span><div><strong>配置所需设备</strong><small>摄影 · 灯光 · 收音 · 附件</small></div></li><li class="workflow-item"><span class="workflow-number">03</span><div><strong>交付完整清单</strong><small>检查明细，导出 Excel</small></div></li></ol>
+    </section>
+    <section class="output-guide" aria-label="可生成的清单"><div class="guide-item"><div><strong>设备总表</strong><p>全部设备与配置，一览无余</p></div></div><div class="guide-item"><div><strong>公司设备表</strong><p>自有设备单独汇总，方便备机</p></div></div><div class="guide-item"><div><strong>租赁询价单</strong><p>汇总租赁需求，向设备商询价</p></div></div></section>
+    <section class="history-panel" id="historyPanel"><div class="history-head"><div><h2 class="history-title">最近项目</h2><p class="history-caption">保存在当前浏览器，随时继续查看。</p></div><button class="history-clear" onclick="clearHistory()">清空记录</button></div><div id="historyList"></div></section>
+  </div>
+  <div id="importView" class="import-view" style="display:none;">
+    <div class="page-heading"><div><h1>粘贴清单</h1><p>把聊天里的设备需求，整理成可修改的清单。</p></div></div>
+    <p class="import-intro">支持简称、中文数量与一行多设备。全部在本机识别，不上传内容；不确定的型号和数量会提示你核对。</p>
+    <section class="import-input-panel" aria-label="输入原始清单">
+      <div class="import-project-fields">
+        <div class="form-group"><label for="importName">项目名称</label><input id="importName" class="form-input" placeholder="可从清单首行标题提取"></div>
+        <div class="form-group"><label for="importDays">拍摄天数</label><input id="importDays" class="form-input" type="number" min="1" step="1" value="1"></div>
+        <div class="form-group"><label for="importCity">拍摄城市（可选）</label><input id="importCity" class="form-input" placeholder="如：上海"></div>
+      </div>
+      <div class="form-group"><label for="importText">原始清单</label><textarea id="importText" class="form-input import-text" oninput="updateImportSummary()" aria-describedby="importHelp" placeholder="FX3 两台，电池10块&#10;如影4pro一套&#10;小蜜蜂一拖二2套（带音频线）"></textarea><p class="import-help" id="importHelp">最多 20,000 字符、300 项。识别明确的条目无需操作，只需处理有疑点的条目。</p></div>
+      <div class="button-group"><button class="btn btn-primary" onclick="analyzePastedList()">识别清单</button><button class="btn btn-secondary" onclick="fillImportExample()">填入示例</button></div>
+      <p id="importError" class="import-notice" role="alert"></p>
+    </section>
+    <section id="importReview" hidden aria-label="核对识别结果">
+      <div class="import-review-head"><div><h2>只需核对存疑项</h2><p id="importSummary" class="import-help" aria-live="polite"></p></div><div class="button-group"><label for="importBatchSource">批量来源</label><select class="form-select" id="importBatchSource"><option>待确认</option><option>公司</option><option>租赁</option></select><button class="btn btn-secondary" onclick="setImportSources()">应用到全部</button></div></div>
+      <div id="importFragments"></div>
+      <div class="import-review-controls"><p id="importSourceSummary" class="import-help"></p><button class="btn btn-secondary" id="importViewToggle" aria-controls="importDraft" aria-pressed="false" onclick="importShowAll=!importShowAll;updateImportSummary()">查看全部设备</button></div>
+      <p id="importReviewEmpty" class="import-notice" hidden role="status"></p>
+      <div id="importDraft"></div>
+      <div class="import-footer"><span class="import-help">无需逐项确认；来源可批量设置，未设置的不会当作公司库存。</span><div class="button-group"><button class="btn btn-secondary" onclick="addImportRow()">添加设备</button><button class="btn btn-primary" id="importGenerateBtn" onclick="generateImportedList()">生成表格</button></div></div>
+    </section>
+  </div>
+  <div id="wizardView" class="wizard-layout" style="display:none;">
+    <aside class="wizard-rail"><p class="rail-title">配置你的拍摄</p><ol class="step-list" id="stepList"></ol></aside>
+    <section class="wizard-card">
+      <div class="wizard-header"><div class="wizard-progress" id="progressBar"></div><div class="wizard-step-info" id="stepInfo"></div><h1 class="wizard-question" id="stepQuestion"></h1><p class="wizard-hint" id="stepHint"></p></div>
+      <div class="wizard-body" id="wizardBody"></div>
+      <div class="wizard-footer"><button class="btn btn-ghost" id="prevBtn" onclick="prevStep()" style="visibility:hidden;">← 上一步</button><button class="btn btn-primary" id="nextBtn" onclick="nextStep()">下一步 →</button></div>
+    </section>
+  </div>
+  <div id="previewView" style="display:none;">
+    <div class="preview-card">
+      <div class="preview-header"><div><h2 id="previewTitle">设备清单</h2><p class="preview-description" id="previewMeta"></p></div><div class="button-group"><button class="btn btn-secondary" id="editToggleBtn" onclick="toggleEditMode()">编辑清单</button><button class="btn btn-secondary" onclick="restartWizard()">新建项目</button></div></div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="label">设备总数</div><div class="value blue" id="statTotal">0</div><div class="sub">项设备配置</div></div>
+        <div class="stat-card"><div class="label">公司设备</div><div class="value green" id="statCompany">0</div><div class="sub">项自有设备</div></div>
+        <div class="stat-card"><div class="label">租赁设备</div><div class="value orange" id="statRental">0</div><div class="sub">项待外部准备</div></div>
+        <div class="stat-card"><div class="label">预计租赁总额</div><div class="value" id="statCost">¥0</div><div class="sub">已知参考金额</div></div>
+      </div>
+      <div class="table-controls"><div class="tabs" role="group" aria-label="清单类型"><button class="tab active" id="tabTotal" onclick="switchTab('total')">设备总表<span class="badge" id="badgeTotal">0</span></button><button class="tab" id="tabCompany" onclick="switchTab('company')">公司设备表<span class="badge" id="badgeCompany">0</span></button><button class="tab" id="tabRental" onclick="switchTab('rental')">租赁询价单<span class="badge" id="badgeRental">0</span></button></div>
+        <div class="export-actions"><button class="btn btn-secondary" onclick="exportExcel('total')" id="exportTotalBtn" style="display:none;">导出总表</button><button class="btn btn-secondary" onclick="exportExcel('company')" id="exportCompanyBtn" style="display:none;">导出公司表</button><button class="btn btn-secondary" onclick="exportExcel('rental')" id="exportRentalBtn" style="display:none;">导出询价单</button><button class="btn btn-primary" onclick="exportExcel('all')">↓ 导出全部</button></div>
+      </div>
+      <div id="tableContainer"></div>
+      <div class="preview-footer"><span>确认设备来源、数量与配置后，即可导出交付。</span><span>未配置参考价时显示待询价，金额汇总仅含已知价格。</span></div>
+    </div>
+  </div>
+</main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ===== 数据 =====
+const CAMERA_OPTIONS=[
+  {name:"索尼FX3",brand:"Sony",priceKey:"索尼FX3"},
+  {name:"索尼FX6",brand:"Sony"},
+  {name:"索尼FX9",brand:"Sony"},
+  {name:"索尼FX30",brand:"Sony"},
+  {name:"索尼A7S III",brand:"Sony"},
+  {name:"索尼A7 IV",brand:"Sony"},
+  {name:"索尼A1",brand:"Sony"},
+  {name:"佳能C70",brand:"Canon"},
+  {name:"佳能C300 III",brand:"Canon"},
+  {name:"佳能R5C",brand:"Canon"},
+  {name:"佳能R5",brand:"Canon"},
+  {name:"RED Komodo",brand:"RED"},
+  {name:"RED Komodo X",brand:"RED"},
+  {name:"BMPCC 6K Pro",brand:"Blackmagic"},
+  {name:"BMPCC 4K",brand:"Blackmagic"},
+  {name:"松下GH6",brand:"Panasonic"},
+  {name:"松下S5 II",brand:"Panasonic"},
+];
+const LENS_OPTIONS=[
+  {name:"索尼16-35 GM II",brand:"Sony",priceKey:"索尼16-35mm f2.8 GM 二代"},
+  {name:"索尼24-70 GM II",brand:"Sony",priceKey:"索尼24-70mm f2.8 GM 二代"},
+  {name:"索尼70-200 GM II",brand:"Sony"},
+  {name:"索尼35 F1.4 GM",brand:"Sony"},
+  {name:"索尼50 F1.2 GM",brand:"Sony"},
+  {name:"索尼85 F1.4 GM",brand:"Sony"},
+  {name:"索尼135 F1.8 GM",brand:"Sony"},
+  {name:"百威100mm",brand:"Sony"},
+  {name:"佳能8-15mm鱼眼",brand:"Canon",priceKey:"佳能8-15mm f4鱼眼"},
+  {name:"佳能24-70 L II",brand:"Canon"},
+  {name:"佳能70-200 L IS III",brand:"Canon"},
+  {name:"老蛙8-15",brand:"其他",priceKey:"老蛙8-15"},
+  {name:"老蛙24mm",brand:"其他"},
+  {name:"匹滋伐55",brand:"其他",priceKey:"匹滋伐55"},
+  {name:"腾龙28-75 F2.8",brand:"其他"},
+  {name:"适马24-70 Art",brand:"其他"},
+];
+const DRONE_OPTIONS=[
+  {name:"大疆Mavic 4pro"},
+  {name:"大疆Mavic 3pro"},
+  {name:"大疆Air 3S"},
+  {name:"大疆Mini 4 Pro"},
+  {name:"FPV穿越机"},
+];
+// 型号依据官方产品目录；参考价只沿用已有的精确 priceKey，不从相似型号推断。
+// 维护范围与来源：docs/qa/2026-10-21-wizard-equipment.md
+const LIGHT_EQUIPMENT=[
+  {name:"爱图仕600X",group:"Light Storm",priceKey:"爱图仕600X"},
+  {name:"爱图仕300X",group:"Light Storm",priceKey:"爱图仕300X"},
+  ...["LS 1200d Pro","LS 600d","LS 600d Pro","LS 600c Pro","LS 600c Pro II","LS 300d","LS 300d II","LS 120d","LS 120d II","LS 60d","LS 60x","LS 1s","LS 1c"].map(model=>({name:"爱图仕 "+model,group:"Light Storm"})),
+  ...["80c","400x","700x","1000c","1200x","CS32","XT52"].map(model=>({name:"爱图仕 STORM "+model,group:"STORM"})),
+  ...["CS15","XT26"].map(model=>({name:"爱图仕 Electro Storm "+model,group:"Electro Storm"})),
+  ...["P300c","P600c","II 1x1","II 2x1","9° 2x1"].map(model=>({name:"爱图仕 NOVA "+model,group:"NOVA"})),
+  ...["1x2","1x4","2x4","4x4","8x8","20x20"].map(model=>({name:"爱图仕 INFINIMAT "+model,group:"INFINIMAT"})),
+  ...[["PB3","1尺"],["PB6","2尺"],["PB12","4尺"]].map(([model,length])=>({name:"爱图仕 INFINIBAR "+model+" "+length+"灯棒",group:"INFINIBAR",unit:"根"})),
+  ...["MC","MC Pro","MT Pro","Accent B7c"].map(model=>({name:"爱图仕 "+model,group:"便携灯",unit:model==="MT Pro"?"根":"个"})),
+  {name:"爱图仕MC四灯套",group:"便携灯",unit:"套",priceKey:"爱图仕MC一套（四灯套）"},
+  ...["60c","120c","360c","660c"].map(model=>({name:"爱图仕 amaran Ray "+model,group:"amaran Ray"})),
+  ...["60x","100x","200x","300x","600x"].map(model=>({name:"爱图仕 amaran Halo "+model,group:"amaran Halo"})),
+  ...["COB 60d S","COB 60x S","100d S","100x S","200d S","200x S","150c","300c"].map(model=>({name:"爱图仕 amaran "+model,group:"amaran COB"})),
+  ...["F21x","F21c","F22x","F22c","P60x","P60c","Pano 60c","Pano 120c"].map(model=>({name:"爱图仕 amaran "+model,group:"amaran 柔性灯 / 平板灯"})),
+  ...["T2c","T4c","PT1c","PT2c","PT4c"].map(model=>({name:"爱图仕 amaran "+model,group:"amaran 灯管",unit:"根"})),
+  ...["Ace 25x","Ace 25c","Go","Verge","Verge Max"].map(model=>({name:"爱图仕 amaran "+model,group:"amaran 便携灯 / 桌面灯"})),
+  {name:"南光60C",group:"其他灯具",priceKey:"南光60C"},
+  {name:"南光60B",group:"其他灯具",priceKey:"南光60B"},
+  {name:"棒灯",group:"其他灯具",unit:"根"},
+];
+const LIGHT_ROLES=[['main','主光'],['fill','面光'],['back','逆光']];
+const AUDIO_OPTIONS=[
+  {name:'大疆小蜜蜂一拖二',outputName:'Dji mic2一拖二',unit:'套',remark:'带蜜头',priceKey:'d21一拖二'},
+  {name:'罗德枪麦',unit:'个'},
+  {name:'罗德一拖二',unit:'套',remark:''},
+  {name:'机头麦',unit:'个'},
+];
+const SPECIAL_CAMERA_OPTIONS=[
+  {name:"大疆Action 5 Pro",type:"运动相机",priceKey:"Action5pro"},
+  {name:"Gopro10",type:"运动相机"},
+  {name:"Insta360 X5",type:"360相机",priceKey:"Insta360 X5"},
+  {name:"FPV穿越机",type:"穿越机"},
+];
+const SPECIAL_ACCESSORIES=["胸挂","脖挂","吸盘","头戴","自拍杆"];
+// 型号目录不包含报价或库存；用户可自行填写 PRICE_DB。
+const EXTRA_EQUIPMENT=["索尼FX3", "索尼16-35mm f2.8 GM 二代", "索尼24-70mm f2.8 GM 二代", "佳能8-15mm f4鱼眼", "大疆 RS4 PRO", "Action5pro", "Insta360 X5", "图瑞思脚架N6t plus碳纤维", "南光60C", "爱图仕600X", "爱图仕300X", "南光60B", "爱图仕MC一套（四灯套）", "d21一拖二", "82mmND+转接环", "匹滋伐55", "老蛙8-15", "大力胶"];
+const PRICE_DB={vendors:[]};
+const SECTION_ORDER=["相机&配件","镜头&滤镜","移动&稳定设备","收音设备","图传&监视器","其他"];
+
+// ===== 向导状态 =====
+let currentStep=0,answers={},currentData=[],generatedData=[],currentTab='total',editMode=false;
+const STEPS=[
+  {id:'project',title:'项目信息',question:'填写项目基本信息',hint:'开始新的设备清单生成'},
+  {id:'cameras',title:'相机选择',question:'选择拍摄主机位',hint:'主机位使用的相机型号'},
+  {id:'lens',title:'镜头选择',question:'选择镜头配置',hint:'根据相机品牌推荐镜头组合'},
+  {id:'stabilizer',title:'稳定器与脚架',question:'稳定器和脚架配置',hint:'移动拍摄设备选择'},
+  {id:'transmission',title:'图传监视器',question:'是否需要图传设备？',hint:'实时监看和图传配置'},
+  {id:'drone',title:'航拍',question:'是否需要航拍？',hint:'无人机航拍配置'},
+  {id:'lighting',title:'灯光',question:'灯光需求',hint:'基础补光或专业布光'},
+  {id:'audio',title:'收音设备',question:'收音设备配置',hint:'默认配置已选，可调整'},
+  {id:'special',title:'特殊机位',question:'是否需要特殊机位？',hint:'运动相机、360相机、穿越机等'},
+  {id:'delivery',title:'交付格式',question:'交付格式',hint:'最终视频交付规格'},
+  {id:'review',title:'确认生成',question:'确认信息并生成清单',hint:'检查配置后生成；设备来源将在表格中确认'},
+];
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function getPrice(key){if(!key)return null;for(const v of PRICE_DB.vendors){const it=v.items.find(i=>i.name===key);if(it)return{...it,vendor:v.name};}return null;}
+
+// ===== 本地清单识别（纯函数；不调用网络或向导生成逻辑） =====
+function importKey(text){return String(text).normalize('NFKC').toLowerCase().replace(/[—–−－]/g,'-').replace(/[\s·_]/g,'');}
+function importNumber(text){
+  if(/^-?\d+(?:\.\d+)?$/.test(text))return Number(text);
+  const digit={零:0,〇:0,一:1,二:2,两:2,三:3,四:4,五:5,六:6,七:7,八:8,九:9};
+  let total=0,value=0;
+  for(const ch of text){if(ch in digit)value=digit[ch];else{total+=(value||1)*({十:10,百:100,千:1000}[ch]||0);value=0;}}
+  return total+value;
+}
+function importCatalog(){
+  const groups=[
+    [CAMERA_OPTIONS,'相机&配件','相机'],[LENS_OPTIONS,'镜头&滤镜','镜头'],
+    [DRONE_OPTIONS,'相机&配件','无人机'],[LIGHT_EQUIPMENT,'其他','灯光'],
+    [SPECIAL_CAMERA_OPTIONS,'相机&配件','特殊机位']
+  ];
+  const entries=groups.flatMap(([items,section,cat])=>items.map(i=>({name:i.name,section,cat,priceKey:i.priceKey||''})));
+  entries.push({name:'大疆 RS4 PRO',section:'移动&稳定设备',cat:'稳定器',priceKey:'大疆 RS4 PRO'});
+  for(const name of EXTRA_EQUIPMENT)if(!entries.some(e=>e.name===name))entries.push({name,...importCategory(name),priceKey:name});
+  for(const v of PRICE_DB.vendors)for(const item of v.items)if(!entries.some(e=>e.name===item.name))entries.push({name:item.name,...importCategory(item.name),priceKey:item.name});
+  return entries;
+}
+function importCategory(name){
+  if(/镜头|鱼眼|百微|微距|移轴|gm|大师|\d+\s*-\s*\d+|nd|滤镜|转接环/i.test(name))return{section:'镜头&滤镜',cat:/nd|滤镜|转接环/i.test(name)?'滤镜':'镜头'};
+  if(/脚架|如影|rs\s*\d|稳定器/i.test(name))return{section:'移动&稳定设备',cat:/脚架/.test(name)?'脚架':'稳定器'};
+  if(/麦|mic|小蜜蜂|通话|音频|收音/i.test(name))return{section:'收音设备',cat:/通话/.test(name)?'通话':'收音'};
+  if(/监|图传/.test(name))return{section:'图传&监视器',cat:'监看'};
+  if(/灯/.test(name))return{section:'其他',cat:'灯光'};
+  if(/电池|充|卡|fx|相机|pocket|action|影石|insta|无人机|航拍|手机/i.test(name))return{section:'相机&配件',cat:/电池|充|卡/.test(name)?'配件':/无人机|航拍/.test(name)?'无人机':'相机'};
+  return{section:'其他',cat:'其他'};
+}
+// Local conventions, not universal model equivalence. Sources and exceptions:
+// docs/superpowers/specs/2026-10-20-lens-shorthand.md
+const IMPORT_LENS_RULES={
+  Sony:{brand:'索尼',zooms:['16-35','24-70','70-200'],primes:[14,24,35,50,85,135]},
+  Canon:{brand:'佳能',zooms:['15-35','16-35','24-70','70-200'],primes:[14,24,35,50,85,135]}
+};
+function importCamera(raw){
+  let key=importKey(raw).replace(/^(?:主机位|主机|副机|备机)[:：]?/,'');
+  // Lens mount/focal specifications and accessories must never establish a body brand.
+  if(/镜头|电池|充电|转接|手柄|(?:rf|ef|gf)\d|\d(?:\.\d+)?mm/.test(key))return null;
+  const bodyDescriptor=/(?:相机|机身)$/.test(key);
+  key=key.replace(/(?:相机|机身)$/,'');
+  const aliases={a7s3:'a7siii',a7m4:'a7iv',x3:'fx3'};
+  const brandPrefix=key.match(/^(索尼|sony|佳能|canon)/)?.[1];
+  const short=key.replace(/^(索尼|sony|佳能|canon)(?:eos)?/,'').replace(/^eos/,'');
+  const normalized=aliases[short]||short;
+  const camera=CAMERA_OPTIONS.find(c=>{
+    if(importKey(c.name)===key)return true;
+    if(!['Sony','Canon'].includes(c.brand))return false;
+    if(brandPrefix&&(/索尼|sony/.test(brandPrefix)?'Sony':'Canon')!==c.brand)return false;
+    return importKey(c.name).replace(/^(索尼|佳能)/,'')===normalized;
+  });
+  if(camera)return camera;
+  const canonModels={r1:'R1',r3:'R3',r6:'R6',r6ii:'R6 Mark II',r6markii:'R6 Mark II',r7:'R7',r8:'R8',r10:'R10',r50:'R50',r100:'R100',rp:'RP'};
+  if(canonModels[normalized]&&(!brandPrefix||/佳能|canon/.test(brandPrefix)))return{name:'佳能'+canonModels[normalized],brand:'Canon'};
+  // Positive body-model patterns: an arbitrary brand + alphanumeric string can be a lens.
+  const bodyPatterns=[
+    [/^(索尼|sony)/,'Sony',/^(?:fx\d+|a\d+[a-z0-9]*)(?:mark)?[ivx]*$/],
+    [/^(佳能|canon)/,'Canon',/^(?:eos)?(?:r(?:\d+[a-z]*|p)|c\d+[a-z]*|\d{1,3}d[sr]*)(?:mark)?[ivx\d]*$/],
+    [/^(尼康|nikon)/,'其他',/^(?:z\d+[a-z]*|zf|zfc|d\d+[a-z]*)(?:ii|iii)?$/],
+    [/^(松下|panasonic)/,'其他',/^(?:lumix)?(?:dc-)?(?:gh|g|s)\d+[a-z0-9]*$/],
+    [/^(富士|fujifilm)/,'其他',/^(?:x-?(?:t|h|s|e|pro)\d+[a-z]*|gfx\d+[a-z]*)$/]
+  ];
+  for(const [prefix,brand,model] of bodyPatterns){
+    if(prefix.test(key)&&(bodyDescriptor||model.test(key.replace(prefix,''))))return{name:raw,brand,unlisted:true};
+  }
+  if(bodyDescriptor&&/^(red|blackmagic)/.test(key))return{name:raw,brand:'其他',unlisted:true};
+  return null;
+}
+function expandImportLensBundles(items){
+  const expanded=items.flatMap(item=>{
+    const key=importKey(item.inputName).replace(/g大师|gmaster|大师/g,'gm');
+    const bundle=key.match(/^((?:索尼|sony|佳能|canon)?(?:gm|红圈|l)?)(?:([12]代|[一二]代|ii?代?)大三元|大三元(?:镜头)?([12]代|[一二]代|ii?代?)?)(?:镜头|套装)?$/);
+    if(!bundle)return[item];
+    const implicit=item.issues.includes('未写数量，暂按 1，请核对');
+    const qty=implicit?1:item.multiplier||/^(套|组)$/.test(item.unit)?item.qty:item.qty===3&&/^(支|只|颗|个)$/.test(item.unit)?1:0;
+    if(!Number.isInteger(qty)||qty<1)return[{...item,issues:[...item.issues,'大三元包含三支镜头，请明确套数；未自动分配各焦段数量']}];
+    const issues=item.issues.filter(s=>s!=='未写数量，暂按 1，请核对'&&s!=='型号未完整匹配，请核对或保留原名称');
+    const generationToken=bundle[2]||bundle[3];
+    return['16-35','24-70','70-200'].map(focal=>({...item,name:bundle[1]+focal,inputName:bundle[1]+focal,
+      qty,unit:'支',cat:'镜头',section:'镜头&滤镜',issues:[...issues],
+      lensBundle:{name:item.inputName,generation:/^(1代|一代|i代?)$/.test(generationToken)?'I':'II',explicitGeneration:Boolean(generationToken),qty}}));
+  });
+  if(expanded.length>300)throw new Error('识别结果超过 300 项，请分批处理');
+  return expanded.map((item,index)=>({...item,id:index+1}));
+}
+function expandImportLensLists(items){
+  return items.flatMap(item=>{
+    const key=importKey(item.inputName).replace(/g大师|gmaster|大师/g,'gm');
+    const list=key.match(/^((?:索尼|sony|佳能|canon)?(?:gm|红圈|l)?(?:[12一二]代|ii?)?)((?:(?:16-35|24-70|70-200)[,，、/]*){2,})(各)?$/);
+    if(!list)return[item];
+    const missing=item.issues.includes('未写数量，暂按 1，请核对');
+    const issues=item.issues.filter(s=>s!=='型号未完整匹配，请核对或保留原名称');
+    if(!missing&&!list[3])issues.push('多个焦段共用一个数量，暂按各 1 支，请确认各焦段数量');
+    return list[2].match(/16-35|24-70|70-200/g).map(focal=>({...item,name:list[1]+focal,inputName:list[1]+focal,
+      qty:list[3]?item.qty:1,unit:'支',cat:'镜头',section:'镜头&滤镜',issues:[...issues],priceKey:'',unitPrice:0,vendor:''}));
+  });
+}
+function applyImportLensRules(items){
+  const cameras=items.map(i=>importCamera(i.inputName)).filter(Boolean);
+  const brands=[...new Set(cameras.map(c=>c.brand))],seen=new Set();
+  return items.map(item=>{
+    const key=importKey(item.inputName).replace(/g大师|gmaster|大师/g,'gm');
+    const prefix=key.match(/^(索尼|sony|佳能|canon)/)?.[1];
+    const text=key.replace(/^(索尼|sony|佳能|canon)/,'');
+    const zoom=text.match(/^(?:gm|红圈|l)?([12]代|[一二]代|ii?代?)?(15-35|16-35|24-70|70-200)(?:mm)?(?:gm|红圈|l)?([12]代|[一二]代|ii?代?)?(?:变焦)?(?:镜头)?([12]代|[一二]代|ii?代?)?$/);
+    const prime=text.match(/^(?:gm|红圈|l)?(\d{1,3})(?:mm)?(?:gm|红圈|l)?定(?:焦)?(?:头|镜头)?$/);
+    const exactLens=item.cat==='镜头'?importCatalog().find(c=>c.cat==='镜头'&&importKey(c.name)===key):null;
+    const nameGenerations=zoom?[zoom[1],zoom[3],zoom[4]].filter(Boolean):exactLens?(exactLens.name.match(/\bI{1,3}\b|[一二三123]代/gi)||[]):[];
+    const noteGenerations=zoom||exactLens?(item.remark||'').split(/[；;，,]/).map(s=>importKey(s).match(/^(?:代际[:：]?)?([12]代|[一二]代|ii?代?)$/)?.[1]).filter(Boolean):[];
+    const generations=[...nameGenerations,...noteGenerations].map(t=>/^(1代|一代|i代?)$/i.test(t)?'I':/^(3代|三代|iii代?)$/i.test(t)?'III':'II');
+    if(item.lensBundle?.explicitGeneration)generations.unshift(item.lensBundle.generation);
+    const generationConflict=new Set(generations).size>1;
+    let next=item;
+    if(exactLens&&!zoom&&generationConflict)next={...item,priceKey:'',unitPrice:0,vendor:'',confirmed:false,issues:[...item.issues,'镜头代际冲突，请核对；未覆盖原文']};
+    const precise=zoom&&!item.lensBundle&&!generationConflict&&exactLens;
+    if((zoom||prime)&&!precise){
+      const focal=zoom?zoom[2]:prime[1],series=/gm/.test(text)?'Sony':/红圈|l/.test(text)?'Canon':'';
+      const generation=generationConflict?'':generations[0]||item.lensBundle?.generation||(zoom&&['16-35','24-70','70-200'].includes(focal)?'II':'');
+      const explicitGeneration=generations.length>0;
+      const explicit=prefix?(/索尼|sony/.test(prefix)?'Sony':'Canon'):series;
+      const brand=explicit||(brands.length===1?brands[0]:brands.length===0?'Sony':'');
+      const rules=IMPORT_LENS_RULES[brand],issues=item.issues.filter(s=>s!=='型号未完整匹配，请核对或保留原名称');
+      let name=item.inputName,inference='';
+      if(generationConflict)issues.push('镜头代际冲突，请核对；未覆盖原文');
+      else if(!brand)issues.push('清单包含多品牌相机，请指定这支镜头的品牌');
+      else if(!rules)issues.push('当前机身不适用索尼/佳能默认规则，请指定镜头品牌与系列');
+      else if(explicit&&series&&explicit!==series)issues.push('镜头品牌与系列冲突，请核对');
+      else{
+        const supported=zoom?rules.zooms.includes(focal):rules.primes.includes(Number(focal));
+        name=rules.brand+focal+'mm'+(supported?(brand==='Sony'?' GM':zoom?' L 大三元':' L'):'')+(prime?' 定焦':'');
+        if(!supported)issues.push('此焦段不在已核实的默认系列中，请确认具体镜头；未自动标为 GM/L');
+        if(brand==='Canon'&&zoom&&focal==='16-35')issues.push('佳能16-35为EF系列，RF大三元广角为15-35；请确认卡口或转接，未自动改焦段');
+        if(explicit&&brands.length&& !brands.includes(explicit))issues.push('镜头明确品牌与清单机身品牌不同，请确认搭配或转接');
+        const basis=explicit?'按原文品牌/系列':cameras.length?'根据清单机身 '+cameras.map(c=>c.name).join('、'):'按用户默认索尼规则';
+        inference=basis+'识别；未指定'+(generation?'光圈或卡口':'光圈、代际或卡口')+'，未自动绑定具体型号价格';
+      }
+      if(generation){
+        if(name!==item.inputName||!nameGenerations.length)name+=' '+generation;
+        inference=[inference,explicitGeneration?'按原文保留'+(generation==='I'?'一代（I）':'二代（II）'):'按用户约定默认二代（II）'].filter(Boolean).join('；');
+      }
+      if(item.lensBundle){
+        inference='由“'+item.lensBundle.name+'”按大三元组合拆成 16-35、24-70、70-200，各 '+item.qty+' 支'+
+          (inference?'；'+inference:'');
+      }
+      const suggestions=rules&&!generationConflict?importCatalog().filter(c=>c.cat==='镜头'&&c.name.startsWith(rules.brand)&&importKey(c.name).includes(focal)&&
+        (!generation||(generation==='I'?!/\bII+\b|[二三]代|[23]代/i.test(c.name):/\bII\b|二代|2代/i.test(c.name)))).map(c=>c.name).slice(0,3):[];
+      next={...item,name,cat:'镜头',section:'镜头&滤镜',priceKey:'',unitPrice:0,vendor:'',issues,suggestions,inference};
+      if(item.lensBundle&&generation)next.lensBundle={...item.lensBundle,generation,explicitGeneration};
+    }
+    const identity=next.cat==='镜头'?importKey(next.name).replace(/(\d)mm/g,'$1'):importKey(next.name);
+    if(seen.has(identity)&&!next.issues.includes('可能与前面条目重复，未自动合并'))next={...next,issues:[...next.issues,'可能与前面条目重复，未自动合并']};
+    seen.add(identity);
+    return next;
+  });
+}
+function invalidateImportCameraContext(items,previousName,nextName){
+  if(importCamera(previousName)?.brand===importCamera(nextName)?.brand)return false;
+  let changed=false;
+  for(const item of items)if(item.inference){
+    item.issues=[...new Set([...item.issues,'机身信息已变化，请重新识别或核对镜头品牌；未自动覆盖当前镜头'])];
+    item.confirmed=false;changed=true;
+  }
+  return changed;
+}
+// Local shorthand + verified product names, never a fuzzy substring match.
+// Sources, scope and exceptions: docs/qa/2026-10-21-equipment-aliases.md
+function importEquipmentAlias(raw,remark=''){
+  const key=importKey(raw),notes=remark.split(/[；;，,]/).map(importKey);
+  const rs=key.match(/^(?:大疆|dji)?(?:如影|rs)4(pro(?:版)?|mini(?:版)?|(?:普通|标准)[版款]|(?:非|不要|不是)pro(?:版)?)?(?:稳定器|云台)?$/);
+  if(rs){
+    const version=token=>{
+      token=token.replace(/^(?:版本|型号)[:：]/,'');
+      return /^pro(?:版)?$/.test(token)?'PRO':/^mini(?:版)?$/.test(token)?'Mini':/^(?:(?:普通|标准)[版款]|(?:非|不要|不是)pro(?:版)?)$/.test(token)?'标准版':'';
+    };
+    const versions=[version(rs[1]||''),...notes.map(version)].filter(Boolean);
+    if(new Set(versions).size>1)return{name:raw.trim(),section:'移动&稳定设备',cat:'稳定器',priceKey:'',issues:['稳定器版本冲突，请核对；未套用 RS4 Pro 默认规则'],suggestions:[]};
+    const model=versions[0]||'PRO';
+    return{name:'大疆 RS4 '+model,section:'移动&稳定设备',cat:'稳定器',priceKey:model==='PRO'?'大疆 RS4 PRO':'',issues:[],suggestions:[]};
+  }
+  let name='';const issues=[];
+  if(/^(?:爱图仕|aputure)?(?:storm)?80c(?:灯|灯光|补光灯)?$/.test(key))name='爱图仕 STORM 80c';
+  else if(/^04(?:号)?(?:腿|灯腿|灯架)$/.test(key))name='04灯架';
+  else if(/^(?:爱图仕|aputure)?(?:(?:inf|infinibar)(?:pb6)?(?:[2二两](?:英尺|尺|ft))|(?:inf|infinibar)?pb6(?:[2二两](?:英尺|尺|ft))?)(?:灯棒|棒灯|灯管)?$/.test(key)){
+    name='爱图仕 INFINIBAR PB6 2尺灯棒';
+    // Only standalone length specifications describe this bar; accessory lengths remain notes.
+    const lengths=notes.map(n=>n.match(/^(?:长度[:：]?)?(\d+(?:\.\d+)?|[一二两三四五六七八九十]+)(英尺|尺|ft|厘米|cm|毫米|mm|米|m)$/)).filter(Boolean);
+    const mismatch=lengths.some(([,value,unit])=>{
+      const amount=importNumber(value);
+      if(/^(英尺|尺|ft)$/.test(unit))return amount!==2;
+      const cm=amount*(/^(米|m)$/.test(unit)?100:/^(毫米|mm)$/.test(unit)?0.1:1);
+      // PB6 is 604 mm physically, marketed as 2 ft / 60 cm. Allow rounded descriptions.
+      return Math.abs(cm-60.4)>1;
+    });
+    if(mismatch)issues.push('灯棒长度冲突：PB6 为 2 英尺，请核对原文规格');
+  }
+  if(name&&name!=='04灯架'){
+    const brands=notes.map(n=>n.match(/^品牌[:：](.+)$/)?.[1]||(/^(爱图仕|aputure|神牛|godox|南光|nanlite)$/.test(n)?n:'')).filter(Boolean);
+    if(brands.some(b=>!/^(爱图仕|aputure)$/.test(b)))issues.push('灯具品牌冲突，请核对；未套用爱图仕简称规则');
+  }
+  return name?{name:issues.length?raw.trim():name,section:'其他',cat:'灯光',priceKey:'',issues,suggestions:[]}:null;
+}
+function applyImportEquipmentNotes(items){
+  // Continuation-line notes are complete only after all input lines have been read.
+  return items.map(item=>{
+    const alias=item.remark&&importEquipmentAlias(item.inputName,item.remark);
+    if(!alias)return item;
+    const price=getPrice(alias.priceKey);
+    return{...item,...alias,issues:[...new Set([...item.issues,...alias.issues])],
+      unitPrice:price?price.unit_price:0,pricingType:price?price.pricing_type:'天',vendor:price?price.vendor:''};
+  });
+}
+function matchImportEquipment(raw){
+  const key=importKey(raw),catalog=importCatalog();
+  const camera=importCamera(raw);
+  if(camera)return{name:camera.name,section:'相机&配件',cat:'相机',priceKey:camera.priceKey||'',issues:camera.unlisted?['机身型号未完整匹配，品牌已按原文识别，请核对型号']:[],suggestions:[]};
+  const equipmentAlias=importEquipmentAlias(raw);
+  if(equipmentAlias)return equipmentAlias;
+  const aliases=[
+    [/^(?:索尼|sony)?fx(3|30|6|9)$/i,m=>'索尼FX'+m[1]],
+    [/^(?:影石(?:360)?|insta360|360)?x5$/i,()=> 'Insta360 X5'],
+    [/^(?:360套装|(?:影石|萤石|insta360)x5(?:360)?(?:相机|套装)?)$/i,()=> 'Insta360 X5'],
+    [/^(?:大疆|dji)?(?:osmo)?action5pro$/i,()=> '大疆Action 5 Pro']
+  ];
+  let name=raw.trim();
+  for(const [pattern,resolve] of aliases){const m=key.match(pattern);if(m){name=resolve(m);break;}}
+  const exact=catalog.find(e=>importKey(e.name)===importKey(name));
+  if(exact)return{...exact,issues:[],suggestions:[]};
+  const issues=[];
+  if(/^(四冲|四充)$/.test(name))name='四充充电器';
+  const filter=/^(?:无极|无级|可变)?nd(?:滤镜|镜)?$/i.test(key);
+  if(filter){name=/^(无极|无级|可变)/.test(key)?'可变ND滤镜':'ND滤镜';issues.push('滤镜尺寸与型号未明确，请核对');}
+  name=name.replace(/(\d+)\s*g(?:b)?/ig,'$1G').replace(/g大师/ig,'GM');
+  if(/或者|或是|二选一/.test(name))issues.push('原文列出备选型号，请选择所需设备或注明任选其一');
+  else if(!filter&&!importGenericName(name))issues.push('型号未完整匹配，请核对或保留原名称');
+  const category=importCategory(name);
+  const tokens=importKey(name).match(/[a-z]+\d*|\d+(?:-\d+)?|[\u4e00-\u9fff]{2,}/g)||[];
+  const suggestions=catalog.map(e=>({e,score:tokens.reduce((n,t)=>n+(importKey(e.name).includes(t)?t.length:0),0)})).filter(x=>x.score>=3).sort((a,b)=>b.score-a.score).slice(0,3).map(x=>x.e.name);
+  return{name,...category,priceKey:'',issues,suggestions};
+}
+function importGenericName(name){
+  // A recognized equipment kind is sufficient for a list; do not invent a catalog SKU or price.
+  return /^(?:(?:原厂|V口|\d+V口)?电池|(?:四充|双充)(?:充电器)?|(?:电池)?充电器|(?:高速|TF小?|小|SD|A|内存|存储)?卡(?:\d+G)?|\d+卡|(?:高速)?读卡器|大力胶|大力夹|怪手|棒灯|(?:小|mini|独|三)?脚架|(?:小|mini)三脚架|机头麦|麦克风|(?:大疆)?(?:mic(?:2)?(?:麦克风)?|小蜜蜂(?:一拖二)?)|稳定器|百微|移轴\d+|\d+微距|图传发射|(?:无线)?小监|排插|露营车|zoomh6|HDMI线材|大疆无人机|手机拍摄|三方通话一拖七|折叠反光板|便携灯腿)$/i.test(name.replace(/\s+/g,''));
+}
+function normalizeImportFocals(outside){
+  return outside.replace(/(^|[\s,，、+])((?:(?:索尼|sony|佳能|canon)\s*)?(?:(?:g大师|gm)\s*)?)(1635|2470|70200)(?=$|[\s×*xX一二两三支颗个]|\d+\s*(?:支|颗|个|只)|[12]代)/ig,
+    (_,start,prefix,focal)=>start+prefix+({'1635':'16-35','2470':'24-70','70200':'70-200'}[focal]));
+}
+function normalizeImportOutside(outside,configs){
+  // These are explicitly confirmed local conventions, not guesses for arbitrary compressed digits.
+  const source=outside.match(/^\s*(公司|自有|租赁|外租)(?:设备)?(?:[:：]|\s+)/)?.[0]||'';
+  const cardText=outside.slice(source.length);
+  if(importKey(cardText.replace(/⟦\d+⟧/g,'')).replace(/[。.]+$/,'')==='卡3张2561张80'){
+    const notes=(cardText.match(/⟦\d+⟧/g)||[]).join(' ');
+    outside=source+' A卡256G 3张 '+notes+' '+source+' A卡80G 1张 '+notes;
+  }
+  const protect=text=>{configs.push(text);return '§'+(configs.length-1)+'§';};
+  outside=outside.replace(/360套装/gi,m=>protect(m));
+  // In "X3 x2", the first X3 is the camera. In "RS4 x3", x3 is the count.
+  outside=outside.replace(/(^|[\s,，、+])((?:(?:索尼|sony)\s*)?x3)(?=\s*[xX×*]\s*-?\d)/gi,
+    (_,start,model)=>start+protect(model));
+  // Convert x only after a recognizable device/model, never inside e.g. X5 or 150x灯.
+  outside=outside.replace(/(^|[\s,，、+])([^,，、+×*]*?)\s*[xX]\s*(-?\d+(?:\.\d+)?)(?=$|[\s,，、+⟦。]|\.(?!\d))/g,(all,start,name,qty)=>{
+    const restored=name.replace(/§(\d+)§/g,(_,i)=>configs[Number(i)]).trim();
+    const words=restored.split(/\s+/);
+    const known=words.some((_,index)=>{
+      const candidate=words.slice(index).join(' '),key=importKey(candidate).replace(/^(索尼|sony|佳能|canon)(?:gm|g大师)?/,'');
+      return !matchImportEquipment(candidate).issues.length||/大三元|^(?:16-35|24-70|70-200)/.test(key);
+    });
+    return known?start+name+' × '+qty:all;
+  });
+  // Bare trailing numbers are quantities only after whole known names. Keep model digits intact.
+  outside=outside.replace(/(^|[\s,，、+])((?:大疆)?mic(?:2)?|稳定器|机头麦|(?:原厂|v口)?电池|(?:高速|TF小?|SD|A)?卡|\d+卡|读卡器)(\s*(?:⟦\d+⟧\s*)*)(-?\d+(?:\.\d+)?)(?!\s*(?:台|套|个|张|块|根|卷|支|只|对|颗|条|件|组))(?=$|[\s,，、+])/ig,
+    (all,start,name,space,qty)=>/mic2?$/i.test(name)&&!space?all:start+name+space+' × '+qty);
+  // A separated bare number is a count only after a complete approved alias.
+  outside=outside.replace(/(^|[\s,，、+])([^,，、+×*]*?)\s+(-?\d+(?:\.\d+)?)(?!\s*(?:台|套|个|张|块|根|卷|支|只|对|颗|条|件|组|英尺|尺|厘米|毫米|米|寸|瓦|伏|毫安|安时|公斤|千克|克|(?:ft|mm|cm|m|w|wh|v|g)\b))(?=$|[\s,，、+])/gi,(all,start,name,qty)=>{
+    const words=name.replace(/§(\d+)§/g,(_,i)=>configs[Number(i)]).replace(/⟦\d+⟧/g,'').trim().split(/\s+/);
+    return words.some((_,i)=>importEquipmentAlias(words.slice(i).join(' ')))?start+name+' × '+qty:all;
+  });
+  return outside;
+}
+function parseEquipmentText(input){
+  if(!input.trim())throw new Error('请先粘贴设备清单');
+  if(input.length>20000)throw new Error('清单超过 20,000 字符，请分批识别');
+  const result={title:'',items:[],fragments:[]},groups=[];
+  let buffer='',depth=0,line=1,startLine=1;
+  for(const char of input.replace(/\r\n?/g,'\n')){
+    if('（('.includes(char))depth++;
+    if('）)'.includes(char))depth=Math.max(0,depth-1);
+    if((char==='\n'||char==='；'||char===';')&&depth===0){if(buffer.trim())groups.push({raw:buffer.trim(),line:startLine});buffer='';startLine=char==='\n'?line+1:line;}
+    else buffer+=char;
+    if(char==='\n')line++;
+  }
+  if(buffer.trim())groups.push({raw:buffer.trim(),line:startLine,unclosed:depth>0});
+  let cardContext='',previousItems=[];
+  for(const group of groups){
+    let text=group.raw.normalize('NFKC').replace(/[—–−－]/g,'-').replace(/[✖✕]\uFE0F?/g,'×').replace(/^\s*(?:[-*]\s+|[•●]\s*|\d+、\s*|\d+\.(?!\d)\s*)/,'');
+    if(!result.items.length&&!result.title&&/[:：]$/.test(text)&&!/\d+\s*(台|套|张|个)/.test(text)){result.title=text.slice(0,-1).trim();continue;}
+    if(/^(?:备注|注意|要求|说明|提示)\s*[:：]/.test(text)){result.fragments.push({raw:group.raw,line:group.line});previousItems=[];continue;}
+    const notes=[];let outside='',note='',level=0;
+    for(const ch of text){
+      if(ch==='('){if(level++===0){outside+=' ⟦'+notes.length+'⟧ ';note='';}else note+=ch;}
+      else if(ch===')'&&level){if(--level===0)notes.push(note.trim());else note+=ch;}
+      else if(level)note+=ch;else outside+=ch;
+    }
+    if(level)notes.push(note.trim());
+    if(!outside.replace(/⟦\d+⟧/g,'').trim()&&notes.length){
+      if(previousItems.length===1){
+        const previous=previousItems[0];
+        previous.remark=[previous.remark,...notes].filter(Boolean).join('；');
+        previous.raw+='\n'+group.raw;
+        if(group.unclosed)previous.issues.push('括号未闭合，后续文字已保留在备注，请核对');
+      }else{
+        result.fragments.push({raw:group.raw,line:group.line});
+        for(const previous of previousItems)previous.issues.push('下一行备注归属不明确，已保留原文，请核对备注归属');
+      }
+      continue;
+    }
+    const configs=[],joinedModels=[];
+    outside=outside.replace(/[一二两三四五六七八九十\d]+拖(?:[二两三四五六七八九十]|\d+)/g,m=>{configs.push(m);return '§'+(configs.length-1)+'§';});
+    outside=normalizeImportFocals(outside);
+    // RS42套 / PB62根 are plausible joined counts, but still need a split warning.
+    outside=outside.replace(/(?:rs\s*4|如影\s*4|pb\s*6)(?=\d+\s*(?:台|套|个|根|支|只))/ig,m=>{
+      joinedModels.push(importKey(m));configs.push(m);return '§'+(configs.length-1)+'§';
+    });
+    // Mask numeric model cores before adjacent counts. Do not mask bare X3 here:
+    // after a known device "x3" is a multiplier; a standalone X3 is matched as a camera later.
+    outside=outside.replace(/(?:索尼\s*)?FX(?:30|3|6|9)(?![a-wyz]|\d+[a-wyz])|(?:佳能\s*)?(?:R100|R50|R10|R5C|R6\s*(?:Mark\s*)?II|R[135678]|C70|C300\s*III)(?![a-z])|(?:索尼\s*)?(?:A7S\s*(?:III|3)|A7\s*(?:IV|M4)|A1)(?![a-z])|(?:16\s*-\s*35|24\s*-\s*70|70\s*-\s*200|15\s*-\s*35)(?!\d*[a-z])/ig,(m,offset)=>{
+      if(/^\d+\s*(?:台|套|个|支)/.test(outside.slice(offset+m.length)))joinedModels.push(importKey(m));
+      configs.push(m);return '§'+(configs.length-1)+'§';
+    });
+    outside=outside.replace(/(§\d+§)\s*x\s*(\d+)(?=\s*$)/ig,'$1 × $2');
+    outside=normalizeImportOutside(outside,configs);
+    const restore=s=>s.replace(/§(\d+)§/g,(_,i)=>configs[Number(i)]);
+    const takeNotes=s=>{
+      const found=[],leading=[];
+      const clean=s.replace(/⟦(\d+)⟧/g,(_,i,offset)=>{
+        const before=s.slice(0,offset).replace(/⟦\d+⟧/g,'').replace(/[\s,，、+]/g,'');
+        (before?found:leading).push(notes[Number(i)]);return '';
+      });
+      return{text:restore(clean).replace(/^[\s,，、+。.]+|[\s,，、+。.]+$/g,'').trim(),notes:found.filter(Boolean),leading:leading.filter(Boolean)};
+    };
+    const countPattern=/(?:(-?[0-9]+(?:\.[0-9]+)?|[零〇一二两三四五六七八九十百千]+)\s*(台|套(?!装)|个|张|块|根|卷|支|只|对|颗|条|件|组)|(?:[×*]|\s[xX]\s+)\s*(-?\d+(?:\.\d+)?)(?!\d))/g;
+    const matches=Array.from(outside.matchAll(countPattern));
+    const chunks=[];let cursor=0,pending=null;
+    for(const [index,match] of matches.entries()){
+      const gap=outside.slice(cursor,match.index),part=takeNotes(gap),qty=importNumber(match[1]||match[3]),unit=match[2]||'个',multiplier=Boolean(match[3]);
+      if(part.leading.length&&chunks.length&&!pending)chunks[chunks.length-1].notes.push(...part.leading);
+      else part.notes.unshift(...part.leading);
+      if(part.text){
+        if(pending){chunks.push({...pending,name:part.text,notes:[...pending.notes,...part.notes]});pending={qty,unit,multiplier,notes:[]};}
+        else chunks.push({name:part.text,qty,unit,multiplier,notes:part.notes});
+      }else if(chunks.length){
+        const following=takeNotes(outside.slice(match.index+match[0].length,matches[index+1]?.index)).text;
+        if(/[,，、]/.test(gap)&&following)pending={qty,unit,multiplier,notes:part.notes};
+        else{
+          const last=chunks[chunks.length-1];last.notes.push(...part.notes);last.issues=last.issues||[];
+          if(qty!==last.qty)last.issues.push('数量冲突，暂取第一个数量，请核对');
+        }
+      }else pending={qty,unit,multiplier,notes:part.notes};
+      cursor=match.index+match[0].length;
+    }
+    const tail=takeNotes(outside.slice(cursor));
+    if(tail.leading.length&&chunks.length&&!pending)chunks[chunks.length-1].notes.push(...tail.leading);
+    else tail.notes.unshift(...tail.leading);
+    if(pending&&tail.text)chunks.push({...pending,name:tail.text,notes:[...pending.notes,...tail.notes]});
+    else if(tail.text&&chunks.length&&/^(?:单独的|带|配|含|附)/.test(tail.text))chunks[chunks.length-1].notes.push(tail.text,...tail.notes);
+    else if(tail.text){
+      const names=tail.text.split(/\s+/);
+      for(const name of names.length>1&&names.every(importGenericName)?names:[tail.text])
+        chunks.push({name,qty:1,unit:'个',notes:tail.notes,issues:['未写数量，暂按 1，请核对']});
+    }
+    else if(chunks.length){chunks[chunks.length-1].notes.push(...tail.notes);if(pending)result.fragments.push({raw:group.raw,line:group.line});}
+    else if(!chunks.length){result.fragments.push({raw:group.raw,line:group.line});continue;}
+    previousItems=[];
+    for(const chunk of chunks){
+      let name=chunk.name.trim(),source='待确认';
+      name=name.replace(/(?:^|\s)(公司|自有|租赁|外租)(?:设备)?(?:[:：]|\s|$)/g,(_,s)=>{source=/公司|自有/.test(s)?'公司':'租赁';return '';}).trim();
+      if(/^(高速|tf|sd|内存|存储)卡/i.test(name))cardContext=name.match(/^(高速|tf|sd|内存|存储)卡/i)[0];
+      else if(/^\d+\s*g(?:b)?$/i.test(name)&&cardContext)name=cardContext+' '+name;
+      const match=matchImportEquipment(name),price=getPrice(match.priceKey);
+      const issues=[...(chunk.issues||[]),...match.issues];
+      if(joinedModels.some(m=>importKey(name).includes(m)))issues.push('型号与数量连写，请核对拆分结果');
+      if(!Number.isInteger(chunk.qty)||chunk.qty<1)issues.push('数量须为正整数，请修改');
+      if(group.unclosed)issues.push('括号未闭合，后续文字已保留在备注，请核对');
+      if(chunk.notes.length&&chunks.some(other=>other!==chunk&&chunk.notes.some(note=>note.includes(other.name))))
+        issues.push('备注提到了同一行其他设备，请核对备注归属');
+      const item={id:result.items.length+1,...match,inputName:name,qty:chunk.qty,unit:chunk.unit,multiplier:chunk.multiplier||false,spec:'',remark:chunk.notes.join('；'),source,unitPrice:price?price.unit_price:0,pricingType:price?price.pricing_type:'天',vendor:price?price.vendor:'',raw:group.raw,line:group.line,issues:[...new Set(issues)],confirmed:false};
+      result.items.push(item);previousItems.push(item);
+      if(result.items.length>300)throw new Error('识别结果超过 300 项，请分批处理');
+    }
+  }
+  // Duplicate identities are checked by the final rules pass after note-driven model resolution.
+  result.items=applyImportLensRules(expandImportLensBundles(expandImportLensLists(applyImportEquipmentNotes(result.items))));
+  return result;
+}
+
+function importItemRemark(item){
+  return [item.remark,item.inference?'识别说明：'+item.inference:'',...(!item.confirmed&&(item.issues||[]).length?['待确认：'+item.issues.join('；')]:[])].filter(Boolean).join('\n');
+}
+function changeImportedItem(item,field,value){
+  const next={...item,[field]:value};
+  if(field!=='confirmed'&&field!=='source')next.confirmed=false;
+  if(field==='name'&&value!==item.name){
+    next.priceKey='';next.unitPrice=0;next.vendor='';next.inference='';
+    next.suggestions=matchImportEquipment(value).suggestions;
+    const exact=importCatalog().find(e=>importKey(e.name)===importKey(value));
+    if(exact)next.suggestions=[exact.name,...next.suggestions.filter(n=>n!==exact.name)];
+    next.issues=[...(item.issues||[]).filter(i=>!i.startsWith('名称已修改')),'名称已修改，原价格已清除；如需参考价请选择匹配型号'];
+  }
+  return next;
+}
+function resolveImportCandidate(item,name){
+  const matched=importCatalog().find(i=>i.name===name);if(!matched)return null;
+  const price=getPrice(matched.priceKey);
+  return{...item,...matched,inference:'',unitPrice:price?price.unit_price:0,pricingType:price?price.pricing_type:'天',vendor:price?price.vendor:'',
+    issues:item.issues.filter(s=>s!=='型号未完整匹配，请核对或保留原名称'&&s!=='品牌参考上一行镜头，请核对'&&!s.startsWith('名称已修改')),
+    confirmed:false,suggestions:[]};
+}
+function importValidation(items,days){
+  if(!Number.isInteger(Number(days))||Number(days)<1)return'拍摄天数须为正整数';
+  if(!items.length)return'请至少保留一项设备';
+  if(items.length>300)return'最多 300 项设备，请分批处理';
+  const index=items.findIndex(i=>!String(i.name).trim()||!String(i.unit).trim()||!Number.isInteger(i.qty)||i.qty<1);
+  return index>=0?'第 '+(index+1)+' 项：请填写设备名称、单位和正整数数量':'';
+}
+function importNeedsReview(item){return Boolean(importValidation([item],1)||(!item.confirmed&&(item.issues||[]).length));}
+function importReviewText(item){
+  const error=importValidation([item],1);
+  return error?error.replace(/^第 1 项：/,''):item.confirmed?'已人工确认':(item.issues||[]).join('；')||'识别明确，无需核对';
+}
+function importConfirmationHTML(item){
+  if(!(item.issues||[]).length)return'';
+  return '<label class="import-confirm"><input type="checkbox" id="importConfirmed'+item.id+'" '+(item.confirmed?'checked ':'')+(importValidation([item],1)?'disabled ':'')+'onchange="updateImportItem('+item.id+',\'confirmed\',this.checked)">确认此项无误</label>';
+}
+function isUnpriced(item){return item.source==='租赁'&&(!item.priceKey||!getPrice(item.priceKey));}
+function importSummary(){
+  return{pending:currentData.filter(i=>i.source==='待确认').length,unpriced:currentData.filter(isUnpriced).length,issues:currentData.filter(i=>!i.confirmed&&(i.issues||[]).length).length};
+}
+
+// ===== 粘贴与核对界面（草稿独立于现有项目） =====
+let importDraft=null,importAnalyzedText='',importDirty=false,importShowAll=false;
+function importProjectFields(){return{name:document.getElementById('importName').value,city:document.getElementById('importCity').value,days:document.getElementById('importDays').value};}
+function hasImportDraftChanges(){
+  return Boolean(importDraft&&(importDirty||document.getElementById('importText').value!==importAnalyzedText||
+    (importDraft.projectFields&&JSON.stringify(importDraft.projectFields)!==JSON.stringify(importProjectFields()))));
+}
+function syncCleanImportDraft(){
+  if(!importDraft||!answers.importMeta||importDraft.historyId!==answers.importMeta.historyId||hasImportDraftChanges())return;
+  importDraft.items=JSON.parse(JSON.stringify(currentData));importDraft.baseData=JSON.stringify(currentData);
+  renderImportDraft();
+}
+const IMPORT_EXAMPLE=`演示项目：
+fx3两台 2台 电池10块 四冲两个（电池国标3c标识牌不能破看不清，要不然上不了飞机 四充充电器两套）
+高速卡160g2张 240g 2张
+tf卡256g一张
+索尼g大师16—35 一个
+24—70 两个
+70—200一个
+老蛙鱼眼镜头一个
+大疆如影4pro一套
+影石360 X5一套（＋自拍杆）
+手机拍摄一台
+大疆action5Pro2套（＋脖颈支架＋头套支架＋充电器＋自拍杆两个）（带卡）
+pocket4Pro 2套（带延长电池手柄）
+大疆小蜜蜂一拖二2套（带咪头3.5音频线两条＋充电器）
+机头麦2套
+两个小三脚架
+大力胶一卷
+棒灯一根
+无极nd2张（结合上面三颗镜头配备相应的转接环）
+大疆无人机一套
+无线小监两套
+三方通话一拖七一套`;
+function fillImportExample(){
+  const input=document.getElementById('importText');
+  if(input.value.trim()&&!confirm('用示例替换当前原文？已编辑的识别草稿会保留，直到你重新识别。'))return;
+  input.value=IMPORT_EXAMPLE;updateImportSummary();input.focus();
+}
+function analyzePastedList(){
+  const input=document.getElementById('importText').value;
+  const error=document.getElementById('importError');
+  error.textContent='';
+  if(hasImportDraftChanges()&&!confirm('重新识别将替换已修改的草稿，是否继续？'))return;
+  try{
+    const parsed=parseEquipmentText(input);
+    importDraft={...parsed,historyId:null};
+    importAnalyzedText=input;importDirty=false;importShowAll=false;
+    if(!document.getElementById('importName').value.trim())document.getElementById('importName').value=parsed.title;
+    importDraft.projectFields=importProjectFields();
+    renderImportDraft();
+    document.getElementById('importReview').scrollIntoView({block:'start',behavior:'instant'});
+  }catch(e){error.textContent=e.message;}
+}
+function importCandidateHTML(item){
+  if(!item.suggestions||!item.suggestions.length)return'';
+  return '<label for="importCandidate'+item.id+'">建议型号（选择后才替换名称）</label><select id="importCandidate'+item.id+'" class="form-select" onchange="selectImportCandidate('+item.id+',this.value)"><option value="">保留当前名称</option>'+item.suggestions.map(name=>'<option value="'+escapeHTML(name)+'">'+escapeHTML(name)+'</option>').join('')+'</select>';
+}
+function renderImportDraft(){
+  if(!importDraft)return;
+  document.getElementById('importReview').hidden=false;
+  const field=(item,key,label,type='text')=>'<div><label for="import-'+item.id+'-'+key+'">'+label+'</label><input class="form-input" id="import-'+item.id+'-'+key+'" type="'+type+'" '+(type==='number'?'min="1" step="1" ':'')+'value="'+escapeHTML(item[key])+'" onchange="updateImportItem('+item.id+',\''+key+'\','+(type==='number'?'Number(this.value)':'this.value')+')"></div>';
+  document.getElementById('importDraft').innerHTML=importDraft.items.map((item,index)=>'<article class="import-row" id="importRow'+item.id+'" aria-label="第 '+(index+1)+' 项设备">'+
+    '<div class="import-main-fields">'+field(item,'name','设备名称')+field(item,'qty','数量','number')+field(item,'unit','单位')+
+    '<div><label for="import-'+item.id+'-source">设备来源</label><select class="form-select" id="import-'+item.id+'-source" onchange="updateImportItem('+item.id+',\'source\',this.value)">'+['待确认','公司','租赁'].map(s=>'<option '+(item.source===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div></div>'+
+    '<p class="import-issues" id="importIssues'+item.id+'">'+escapeHTML(importReviewText(item))+'</p>'+
+    '<div class="import-candidates" id="importCandidates'+item.id+'">'+importCandidateHTML(item)+'</div>'+
+    '<details class="import-details"><summary>查看原文与配置 / 更多编辑</summary><div class="import-raw">第 '+item.line+' 行原文：'+escapeHTML(item.raw||'手动添加')+'</div><div class="import-extra-fields">'+
+    field(item,'cat','设备类别')+'<div><label for="import-'+item.id+'-section">清单分组</label><select id="import-'+item.id+'-section" class="form-select" onchange="updateImportItem('+item.id+',\'section\',this.value)">'+SECTION_ORDER.map(s=>'<option '+(item.section===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+    field(item,'spec','配置要求')+field(item,'remark','备注说明')+'</div></details>'+
+    '<div class="import-row-actions"><span id="importConfirmation'+item.id+'">'+importConfirmationHTML(item)+'</span><button class="btn btn-ghost" onclick="deleteImportRow('+item.id+')">删除此项</button></div></article>').join('');
+  document.getElementById('importFragments').innerHTML=importDraft.fragments.length?'<div class="import-notice"><strong>以下文字未作为设备识别</strong><p>默认保留为项目备注，并随表格导出。只有确认不需要时才勾选忽略。</p>'+importDraft.fragments.map((f,i)=>'<div class="import-raw">第 '+f.line+' 行：'+escapeHTML(f.raw)+'</div><label class="import-confirm"><input type="checkbox" '+(f.ignored?'checked':'')+' onchange="importDraft.fragments['+i+'].ignored=this.checked;importDirty=true">忽略这段文字</label>').join('')+'</div>':'';
+  updateImportSummary();
+}
+function updateImportSummary(){
+  if(!importDraft)return;
+  const stale=document.getElementById('importText').value!==importAnalyzedText;
+  const pending=importDraft.items.filter(importNeedsReview).length;
+  const unassigned=importDraft.items.filter(i=>i.source==='待确认').length;
+  document.getElementById('importSummary').textContent=stale?'原文已变更，请重新识别后再生成。':importDraft.items.length+' 项设备 · '+(importDraft.items.length-pending)+' 项无需核对 · '+pending+' 项存疑';
+  document.getElementById('importSourceSummary').textContent=unassigned?unassigned+' 项来源未设置，可在上方批量设置。':'设备来源已设置。';
+  const toggle=document.getElementById('importViewToggle');
+  toggle.textContent=importShowAll?'只看存疑项（'+pending+'）':'查看全部设备（'+importDraft.items.length+'）';
+  toggle.setAttribute('aria-pressed',String(importShowAll));toggle.hidden=!importDraft.items.length;
+  const empty=document.getElementById('importReviewEmpty');
+  empty.hidden=importShowAll||pending>0;
+  empty.textContent=importDraft.items.length?'没有需要核对的条目，可以直接生成表格。':'暂无设备，请添加设备或重新识别。';
+  for(const item of importDraft.items){
+    const row=document.getElementById('importRow'+item.id);
+    row.hidden=!importShowAll&&!importNeedsReview(item);
+    document.getElementById('importIssues'+item.id).style.color=importNeedsReview(item)?'':'var(--text-sec)';
+  }
+  document.getElementById('importGenerateBtn').disabled=stale;
+}
+function updateImportItem(id,key,value){
+  const index=importDraft.items.findIndex(i=>i.id===id);
+  if(index<0)return;
+  const previousName=importDraft.items[index].name;
+  importDraft.items[index]=changeImportedItem(importDraft.items[index],key,value);importDirty=true;
+  const item=importDraft.items[index];
+  const changed=key==='name'&&invalidateImportCameraContext(importDraft.items,previousName,value);
+  for(const row of changed?importDraft.items:[item]){
+    document.getElementById('importIssues'+row.id).textContent=importReviewText(row);
+    document.getElementById('importConfirmation'+row.id).innerHTML=importConfirmationHTML(row);
+  }
+  if(key==='name')document.getElementById('importCandidates'+id).innerHTML=importCandidateHTML(item);
+  updateImportSummary();
+  if(document.getElementById('importRow'+id).hidden){
+    const next=document.querySelector('#importDraft .import-row:not([hidden]) input')||document.getElementById('importGenerateBtn');
+    next.focus({preventScroll:true});
+  }
+}
+function selectImportCandidate(id,name){
+  if(!name)return;
+  const item=importDraft.items.find(i=>i.id===id),matched=item&&resolveImportCandidate(item,name);
+  if(!item||!matched)return;
+  invalidateImportCameraContext(importDraft.items,item.name,name);
+  Object.assign(item,matched);importDirty=true;
+  renderImportDraft();
+}
+function setImportSources(){
+  if(!importDraft)return;
+  const source=document.getElementById('importBatchSource').value;
+  if(!confirm('将全部 '+importDraft.items.length+' 项设备的来源设为“'+source+'”？'))return;
+  importDraft.items.forEach(i=>i.source=source);importDirty=true;renderImportDraft();
+}
+function addImportRow(){
+  if(!importDraft)return;
+  if(importDraft.items.length>=300){showToast('最多 300 项设备，请分批处理');return;}
+  const id=Math.max(0,...importDraft.items.map(i=>i.id))+1;
+  importDraft.items.push({id,name:'',qty:1,unit:'个',section:'其他',cat:'其他',source:'待确认',spec:'',remark:'',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',raw:'手动添加',line:0,issues:[],confirmed:false,suggestions:[]});
+  importDirty=true;renderImportDraft();document.getElementById('import-'+id+'-name').focus();
+}
+function deleteImportRow(id){
+  const previousName=importDraft.items.find(i=>i.id===id)?.name||'';
+  importDraft.items=importDraft.items.filter(i=>i.id!==id);
+  invalidateImportCameraContext(importDraft.items,previousName,'');
+  importDirty=true;renderImportDraft();
+}
+function generateImportedList(){
+  if(!importDraft)return;
+  if(document.getElementById('importText').value!==importAnalyzedText){showToast('原文已变更，请重新识别');return;}
+  const days=Number(document.getElementById('importDays').value),error=importValidation(importDraft.items,days);
+  if(error){document.getElementById('importError').textContent=error;showToast(error);return;}
+  if(importDraft.historyId&&importDraft.historyId===answers.importMeta?.historyId&&importDraft.baseData!==JSON.stringify(currentData)&&!confirm('表格中已有更新。继续生成会用当前草稿替换这些修改，是否继续？'))return;
+  const pending=importDraft.items.filter(i=>!i.confirmed&&i.issues.length).length;
+  if(pending&&!confirm('还有 '+pending+' 项识别疑点。保留待确认标记并生成表格？你仍可返回核对。'))return;
+  const historyId=importDraft.historyId||Date.now();
+  importDraft.historyId=historyId;
+  answers={project:{name:document.getElementById('importName').value.trim()||'导入清单',days,city:document.getElementById('importCity').value.trim(),type:'粘贴导入',notes:importDraft.fragments.filter(f=>!f.ignored).map(f=>f.raw).join('\n')},importMeta:{historyId,raw:importAnalyzedText,fragments:JSON.parse(JSON.stringify(importDraft.fragments))}};
+  currentData=JSON.parse(JSON.stringify(importDraft.items));generatedData=JSON.parse(JSON.stringify(currentData));editMode=false;
+  importDirty=false;importDraft.baseData=JSON.stringify(currentData);importDraft.projectFields=importProjectFields();
+  saveProjectToHistory();showPreview();
+}
+function reopenImportReview(){
+  if(!answers.importMeta)return;
+  if(hasImportDraftChanges()&&!confirm('返回识别核对会用当前表格替换未提交的导入草稿，是否继续？'))return;
+  importDraft={items:JSON.parse(JSON.stringify(currentData)),fragments:JSON.parse(JSON.stringify(answers.importMeta.fragments||[])),historyId:answers.importMeta.historyId,baseData:JSON.stringify(currentData)};
+  importAnalyzedText=answers.importMeta.raw;importDirty=false;importShowAll=false;
+  document.getElementById('importText').value=importAnalyzedText;
+  document.getElementById('importName').value=answers.project.name;
+  document.getElementById('importCity').value=answers.project.city||'';
+  document.getElementById('importDays').value=answers.project.days;
+  importDraft.projectFields=importProjectFields();
+  showPage('import');renderImportDraft();
+}
+function setPreviewSources(){
+  const value=document.getElementById('previewBatchSource').value;
+  if(!confirm('将全部设备来源设为“'+value+'”？'))return;
+  currentData.forEach(i=>setItemSource(i,value));renderTable();updateStats();
+  saveProjectToHistory();
+}
+
+// ===== 渲染向导 =====
+function renderStep(){
+  const step=STEPS[currentStep];
+  document.getElementById('stepList').innerHTML=STEPS.map((s,i)=>`<li class="step-item ${i===currentStep?'current':i<currentStep?'done':''}" ${i===currentStep?'aria-current="step"':''}><span class="step-number">${i<currentStep?'✓':String(i+1).padStart(2,'0')}</span>${escapeHTML(s.title)}</li>`).join('');
+  document.getElementById('progressBar').innerHTML=STEPS.map((s,i)=>`<div class="progress-dot ${i===currentStep?'active':i<currentStep?'done':''}"></div>`).join('');
+  document.getElementById('stepInfo').textContent=`第 ${currentStep+1} 步 / 共 ${STEPS.length} 步 · ${step.title}`;
+  document.getElementById('stepQuestion').textContent=step.question;
+  document.getElementById('stepHint').textContent=step.hint;
+  document.getElementById('prevBtn').style.visibility=currentStep===0?'hidden':'visible';
+  document.getElementById('nextBtn').textContent=currentStep===STEPS.length-1?'生成清单 ✓':'下一步 →';
+  const body=document.getElementById('wizardBody');
+  const r={project:renderProject,cameras:renderCameras,lens:renderLens,stabilizer:renderStabilizer,transmission:renderTransmission,drone:renderDrone,lighting:renderLighting,audio:renderAudio,special:renderSpecial,delivery:renderDelivery,review:renderReview};
+  body.innerHTML=r[step.id]();
+  body.querySelectorAll('.option-pill,.tag-item,.number-option').forEach(el=>{el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-pressed',String(el.classList.contains('selected')||el.classList.contains('active')));});
+  if(step.id==='cameras')setTimeout(initCameraSelects,50);
+}
+
+function renderProject(){
+  if(!answers.project)answers.project={name:'',type:'TVC',city:'',days:3,cameras:2};
+  const a=answers.project;
+  const cities=['北京','上海','广州','深圳','杭州','南京','成都','重庆','武汉','西安','长沙','苏州','郑州','洛阳','厦门','青岛','大连','昆明','三亚','哈尔滨','其他'];
+  return `<div class="project-fields"><div class="form-group field-wide"><label for="projectName">项目名称</label><input id="projectName" type="text" class="form-input" value="${escapeHTML(a.name)}" placeholder="XX品牌宣传片" oninput="answers.project.name=this.value"></div>
+  <div class="form-group"><label>项目类型</label><div class="option-row">${['纪录片','TVC','活动','其他'].map(t=>`<div class="option-pill ${a.type===t?'selected':''}" onclick="answers.project.type='${t}';renderStep()">${t}</div>`).join('')}</div></div>
+  <div class="form-group"><label for="projectCity">拍摄城市</label><select id="projectCity" class="form-select" onchange="answers.project.city=this.value"><option value="">请选择城市</option>${cities.map(c=>`<option ${a.city===c?'selected':''}>${c}</option>`).join('')}</select></div>
+  <div class="form-group field-wide"><label>拍摄天数</label><div class="number-options">${[1,2,3,4,5,6,7,8,9].map(d=>`<div class="number-option ${a.days===d?'selected':''}" onclick="answers.project.days=${d};renderStep()">${d}</div>`).join('')}</div></div>
+  <div class="form-group field-wide"><label>机位数量</label><div class="number-options">${[1,2,3,4,5,6,7,8,9].map(c=>`<div class="number-option ${a.cameras===c?'selected':''}" onclick="answers.project.cameras=${c};renderStep()">${c}</div>`).join('')}</div></div></div>`;
+}
+
+function renderCameras(){
+  if(!answers.cameras)answers.cameras={main:'',secondary:[],sameAsMain:true};
+  const a=answers.cameras;
+  let html=`<div class="sub-question">主机位相机</div><div class="search-select" id="cam_main"></div>`;
+  if(answers.project.cameras>1){
+    html+=`<div class="section-divider"></div><div class="sub-question">副机位（共 ${answers.project.cameras-1} 个）</div>`;
+    html+=`<div class="form-group"><label>副机位是否和主机一样？</label><div class="option-row"><div class="option-pill ${a.sameAsMain?'selected':''}" onclick="answers.cameras.sameAsMain=true;renderStep()">和主机一样</div><div class="option-pill ${!a.sameAsMain?'selected':''}" onclick="answers.cameras.sameAsMain=false;renderStep()">不一样</div></div></div>`;
+    if(!a.sameAsMain){
+      a.secondary=a.secondary||[];
+      while(a.secondary.length<answers.project.cameras-1)a.secondary.push('');
+      for(let i=0;i<answers.project.cameras-1;i++){
+        html+=`<div class="form-group"><label>副机位 ${i+1}</label><div class="search-select" id="cam_sec${i}"></div></div>`;
+      }
+    }
+  }
+  return html;
+}
+
+function renderLens(){
+  if(!answers.lens)answers.lens={extra:[],needExtra:false};
+  const a=answers.lens;
+  a.custom=a.custom||[];
+  const mainCam=answers.cameras?answers.cameras.main:'';
+  const camOpt=CAMERA_OPTIONS.find(c=>c.name===mainCam);
+  const isSony=camOpt&&camOpt.brand==='Sony';
+  let html='';
+  if(isSony){
+    html+=`<div class="default-config"><strong>大三元套装（默认）</strong><p>索尼16-35 GM II + 24-70 GM II + 70-200 GM II</p></div>`;
+    html+=`<div class="sub-question">是否需要额外的定焦或风格化镜头？</div><div class="option-row" style="margin-bottom:16px;"><div class="option-pill ${!a.needExtra?'selected':''}" onclick="answers.lens.needExtra=false;answers.lens.extra=[];answers.lens.custom=[];renderStep()">不需要</div><div class="option-pill ${a.needExtra?'selected':''}" onclick="answers.lens.needExtra=true;renderStep()">需要</div></div>`;
+    if(a.needExtra){
+      const sonyLens=LENS_OPTIONS.filter(l=>l.brand==='Sony'&&!['索尼16-35 GM II','索尼24-70 GM II','索尼70-200 GM II'].includes(l.name));
+      const otherLens=LENS_OPTIONS.filter(l=>l.brand!=='Sony');
+      html+=`<div class="sub-question">索尼定焦镜头</div><div class="tag-group" style="margin-bottom:16px;">${sonyLens.map(l=>`<span class="tag-item ${a.extra.includes(l.name)?'active':''}" onclick="toggleExtra('${l.name}')">${l.name}</span>`).join('')}</div>`;
+      html+=`<div class="sub-question">其他品牌/风格化镜头</div><div class="tag-group">${otherLens.map(l=>`<span class="tag-item ${a.extra.includes(l.name)?'active':''}" onclick="toggleExtra('${l.name}')">${l.name}</span>`).join('')}</div>`;
+    }
+  }else{
+    html+=`<div class="sub-question">选择需要的镜头${camOpt?`（${camOpt.brand}品牌）`:''}</div>`;
+    const brandLens=camOpt?LENS_OPTIONS.filter(l=>l.brand===camOpt.brand):[];
+    const otherLens=camOpt?LENS_OPTIONS.filter(l=>l.brand!==camOpt.brand):LENS_OPTIONS;
+    if(brandLens.length){html+=`<div class="sub-question" style="margin-top:16px;">${camOpt.brand} 镜头</div><div class="tag-group" style="margin-bottom:16px;">${brandLens.map(l=>`<span class="tag-item ${a.extra.includes(l.name)?'active':''}" onclick="toggleExtra('${l.name}')">${l.name}</span>`).join('')}</div>`;}
+    html+=`<div class="sub-question">其他品牌镜头</div><div class="tag-group">${otherLens.map(l=>`<span class="tag-item ${a.extra.includes(l.name)?'active':''}" onclick="toggleExtra('${l.name}')">${l.name}</span>`).join('')}</div>`;
+  }
+  html+=`<div class="section-divider"></div><div class="sub-question">手动添加镜头</div>
+    <p class="equipment-hint">输入完整镜头名称，可添加多支镜头并分别设置数量。</p>
+    <div class="equipment-rows">${a.custom.map((item,i)=>`<div class="equipment-row">
+      <div><label for="customLens${i}">镜头名称 ${i+1}</label><input id="customLens${i}" class="form-input" value="${escapeHTML(item.name)}" placeholder="例如：蔡司 CP.3 35mm T2.1" oninput="answers.lens.custom[${i}].name=this.value"></div>
+      ${wizardQuantityInput('customLensQty'+i,'数量（支）',item.qty,`answers.lens.custom[${i}].qty=Number(this.value)`)}
+      <button class="btn btn-ghost" aria-label="删除手动镜头 ${i+1}" onclick="answers.lens.custom.splice(${i},1);renderStep()">删除</button>
+    </div>`).join('')}</div>
+    <button class="btn btn-secondary" onclick="addWizardLens()">＋ 手动添加镜头</button>`;
+  return html;
+}
+function toggleExtra(name){const idx=answers.lens.extra.indexOf(name);if(idx>=0)answers.lens.extra.splice(idx,1);else answers.lens.extra.push(name);renderStep();}
+function addWizardLens(){
+  answers.lens.needExtra=true;answers.lens.custom.push({name:'',qty:1});renderStep();
+  document.getElementById('customLens'+(answers.lens.custom.length-1)).focus();
+}
+function wizardQuantityInput(id,label,value,handler){
+  return `<div class="equipment-quantity"><label for="${id}">${escapeHTML(label)}</label><input id="${id}" class="form-input" type="number" inputmode="numeric" min="1" step="1" value="${escapeHTML(value??'')}" oninput="${handler}" required></div>`;
+}
+function wizardLensItems(){
+  const a=answers.lens||{};
+  return [...(a.extra||[]).map(name=>({name,qty:1})),...(a.custom||[]).map(item=>({...item,name:item.name.trim()}))];
+}
+function wizardLightItems(){
+  const a=answers.lighting||{};
+  if(a.type==='基础补光')return[{name:'棒灯',qty:a.sticks===undefined?1:a.sticks,role:'',remark:'请核对灯架接口'}];
+  if(a.type!=='专业布光')return[];
+  return [...LIGHT_ROLES.filter(([key])=>a[key]?.trim()).map(([key,role])=>({
+    name:a[key].trim(),qty:a.quantities?.[key]===undefined?1:a.quantities[key],role
+  })),...(a.extra||[]).map(item=>({...item,name:item.name.trim()}))];
+}
+function wizardAudioItems(){
+  const a=answers.audio||{};
+  const names=a.useDefault?AUDIO_OPTIONS.slice(0,2).map(o=>o.name):a.extra||[];
+  return names.map(name=>({...AUDIO_OPTIONS.find(o=>o.name===name),name,qty:a.quantities?.[name]===undefined?1:a.quantities[name]}));
+}
+function wizardEquipmentError(section){
+  const groups=[['lens','镜头',wizardLensItems],['lighting','灯光',wizardLightItems],['audio','收音设备',wizardAudioItems]];
+  for(const [key,label,getItems] of groups){
+    if(section&&section!==key)continue;
+    for(const item of getItems()){
+      if(!item.name)return`请填写${label}名称，或删除空白条目`;
+      if(!Number.isSafeInteger(item.qty)||item.qty<1)return`${item.name}的数量必须是大于 0 的整数`;
+    }
+  }
+  return '';
+}
+
+function renderStabilizer(){
+  if(!answers.stabilizer)answers.stabilizer={need:true,type:'大疆RS4 PRO',tripod:['mini']};
+  const a=answers.stabilizer;
+  let html=`<div class="sub-question">稳定器</div><div class="option-row" style="margin-bottom:24px;"><div class="option-pill ${!a.need?'selected':''}" onclick="answers.stabilizer.need=false;renderStep()">不需要</div><div class="option-pill ${a.need&&a.type==='大疆RS4 PRO'?'selected':''}" onclick="answers.stabilizer.need=true;answers.stabilizer.type='大疆RS4 PRO';renderStep()">大疆RS4 PRO</div><div class="option-pill ${a.need&&a.type==='其他'?'selected':''}" onclick="answers.stabilizer.need=true;answers.stabilizer.type='其他';renderStep()">其他</div></div>`;
+  html+=`<div class="sub-question">脚架（可多选）</div><div class="option-row"><div class="option-pill ${a.tripod.includes('大脚架')?'selected':''}" onclick="toggleTripod('大脚架')">大脚架（图瑞斯）</div><div class="option-pill ${a.tripod.includes('mini')?'selected':''}" onclick="toggleTripod('mini')">mini脚架</div><div class="option-pill ${a.tripod.includes('独脚架')?'selected':''}" onclick="toggleTripod('独脚架')">独脚架（松塔）</div><div class="option-pill ${a.tripod.includes('不需要')?'selected':''}" onclick="toggleTripod('不需要')">不需要</div></div>`;
+  return html;
+}
+function toggleTripod(t){const a=answers.stabilizer;if(t==='不需要'){a.tripod=['不需要'];}else{a.tripod=a.tripod.filter(x=>x!=='不需要');const idx=a.tripod.indexOf(t);if(idx>=0)a.tripod.splice(idx,1);else a.tripod.push(t);}renderStep();}
+
+function renderTransmission(){
+  if(!answers.transmission)answers.transmission={need:false,sets:0,rentalSets:0};
+  const a=answers.transmission;
+  let html=`<div class="option-row" style="margin-bottom:24px;"><div class="option-pill ${!a.need?'selected':''}" onclick="answers.transmission.need=false;answers.transmission.sets=0;renderStep()">不需要</div><div class="option-pill ${a.need?'selected':''}" onclick="answers.transmission.need=true;answers.transmission.sets=1;renderStep()">需要</div></div>`;
+  if(a.need){
+    html+=`<div class="sub-question">需要几套图传？</div><div class="number-options" style="margin-bottom:24px;">${[1,2,3,4].map(n=>`<div class="number-option ${a.sets===n?'selected':''}" onclick="answers.transmission.sets=${n};renderStep()">${n}</div>`).join('')}</div>`;
+    if(a.sets===1)html+=`<div class="default-config"><strong>基础监视器配置</strong><p>1套图传，配备1台猛犸监视器；生成后确认来源</p></div>`;
+    else if(a.sets>=2)html+=`<div class="sub-question">增配监视器（基础1台之外）</div><div class="option-row"><div class="option-pill ${a.rentalSets===1?'selected':''}" onclick="answers.transmission.rentalSets=1;renderStep()">增配1台（猛犸M1）</div><div class="option-pill ${a.rentalSets===2?'selected':''}" onclick="answers.transmission.rentalSets=2;renderStep()">增配2台</div></div>`;
+  }
+  return html;
+}
+
+function renderDrone(){
+  if(!answers.drone)answers.drone={need:false,type:''};
+  const a=answers.drone;
+  let html=`<div class="option-row" style="margin-bottom:24px;"><div class="option-pill ${!a.need?'selected':''}" onclick="answers.drone.need=false;renderStep()">不需要</div><div class="option-pill ${a.need?'selected':''}" onclick="answers.drone.need=true;renderStep()">需要</div></div>`;
+  if(a.need)html+=`<div class="sub-question">选择航拍设备</div><div class="tag-group">${DRONE_OPTIONS.map(d=>`<span class="tag-item ${a.type===d.name?'active':''}" onclick="answers.drone.type='${d.name}';renderStep()">${d.name}</span>`).join('')}</div>`;
+  return html;
+}
+
+function renderLighting(){
+  if(!answers.lighting)answers.lighting={type:'基础补光',sticks:1,main:'',fill:'',back:''};
+  const a=answers.lighting;
+  a.quantities=a.quantities||{};a.extra=a.extra||[];
+  let html=`<div class="option-row" style="margin-bottom:24px;">${['自然光为主','基础补光','专业布光'].map(t=>`<div class="option-pill ${a.type===t?'selected':''}" onclick="answers.lighting.type='${t}';renderStep()">${t}</div>`).join('')}</div>`;
+  if(a.type==='基础补光')html+=wizardQuantityInput('lightSticksQty','棒灯数量（根）',a.sticks,'answers.lighting.sticks=Number(this.value)');
+  else if(a.type==='专业布光'){
+    html+=`<p class="equipment-hint">每个灯位均可选择全部型号。输入 1200d、600d、660c 等可筛选，也可直接填写其他灯具。数量按所选型号的台、根或套计算。</p>
+      <datalist id="lightModels">${LIGHT_EQUIPMENT.map(l=>`<option value="${escapeHTML(l.name)}">${escapeHTML(l.group)}</option>`).join('')}</datalist>
+      <div class="lighting-config">${LIGHT_ROLES.map(([key,label])=>`<div class="lighting-item equipment-card">
+        <div><label for="light-${key}">${label}</label><input id="light-${key}" class="form-input" list="lightModels" autocomplete="off" value="${escapeHTML(a[key]||'')}" placeholder="选择或输入灯具型号" oninput="answers.lighting.${key}=this.value"></div>
+        ${wizardQuantityInput('light-'+key+'-qty',label+'数量',a.quantities[key]===undefined?1:a.quantities[key],`answers.lighting.quantities.${key}=Number(this.value)`)}
+      </div>`).join('')}</div>
+      <div class="equipment-rows">${a.extra.map((item,i)=>`<div class="equipment-row equipment-light-row">
+        <div><label for="extraLightRole${i}">用途</label><select id="extraLightRole${i}" class="form-select" onchange="answers.lighting.extra[${i}].role=this.value">${['主光','面光','逆光','氛围'].map(role=>`<option ${item.role===role?'selected':''}>${role}</option>`).join('')}</select></div>
+        <div><label for="extraLight${i}">额外灯具 ${i+1}</label><input id="extraLight${i}" class="form-input" list="lightModels" autocomplete="off" value="${escapeHTML(item.name)}" placeholder="选择或输入灯具型号" oninput="answers.lighting.extra[${i}].name=this.value"></div>
+        ${wizardQuantityInput('extraLightQty'+i,'数量',item.qty,`answers.lighting.extra[${i}].qty=Number(this.value)`)}
+        <button class="btn btn-ghost" aria-label="删除额外灯具 ${i+1}" onclick="answers.lighting.extra.splice(${i},1);renderStep()">删除</button>
+      </div>`).join('')}</div>
+      <button class="btn btn-secondary" onclick="addWizardLight()">＋ 添加灯具</button>`;
+  }
+  return html;
+}
+function addWizardLight(){
+  answers.lighting.extra.push({name:'',qty:1,role:'氛围'});renderStep();
+  document.getElementById('extraLight'+(answers.lighting.extra.length-1)).focus();
+}
+
+function renderAudio(){
+  if(!answers.audio)answers.audio={useDefault:true,extra:[]};
+  const a=answers.audio;
+  a.quantities=a.quantities||{};
+  let html=`<div class="default-config"><strong>默认组合</strong><p>大疆小蜜蜂一拖二（带咪头） + 罗德枪麦，可在下方调整各设备数量。</p></div>
+  <div class="sub-question">是否需要调整收音配置？</div><div class="option-row"><div class="option-pill ${a.useDefault?'selected':''}" onclick="answers.audio.useDefault=true;answers.audio.extra=[];answers.audio.quantities={};renderStep()">使用默认</div><div class="option-pill ${!a.useDefault?'selected':''}" onclick="answers.audio.useDefault=false;renderStep()">需要调整</div></div>`;
+  if(!a.useDefault){
+    html+=`<div class="tag-group" style="margin-top:16px;">${AUDIO_OPTIONS.map(o=>`<span class="tag-item ${a.extra.includes(o.name)?'active':''}" onclick="toggleAudioExtra('${o.name}')">${o.name}</span>`).join('')}</div>`;
+  }
+  html+=`<div class="equipment-rows">${wizardAudioItems().map((item,i)=>`<div class="equipment-row equipment-audio-row">
+    <div class="equipment-name">${escapeHTML(item.name)}</div>
+    ${wizardQuantityInput('audioQty'+i,item.name+'数量（'+item.unit+'）',item.qty,`answers.audio.quantities['${item.name}']=Number(this.value)`)}
+  </div>`).join('')}</div>`;
+  return html;
+}
+function toggleAudioExtra(name){const idx=answers.audio.extra.indexOf(name);if(idx>=0)answers.audio.extra.splice(idx,1);else answers.audio.extra.push(name);renderStep();}
+
+function renderSpecial(){
+  if(!answers.special)answers.special={need:false,cameras:[],accessories:[]};
+  const a=answers.special;
+  let html=`<div class="option-row" style="margin-bottom:24px;"><div class="option-pill ${!a.need?'selected':''}" onclick="answers.special.need=false;renderStep()">不需要</div><div class="option-pill ${a.need?'selected':''}" onclick="answers.special.need=true;renderStep()">需要</div></div>`;
+  if(a.need){
+    html+=`<div class="sub-question">特殊机位设备（可多选）</div><div class="tag-group" style="margin-bottom:24px;">${SPECIAL_CAMERA_OPTIONS.map(c=>`<span class="tag-item ${a.cameras.includes(c.name)?'active':''}" onclick="toggleSpecialCam('${c.name}')">${c.name} (${c.type})</span>`).join('')}</div>`;
+    html+=`<div class="sub-question">配件（可多选）</div><div class="option-row">${SPECIAL_ACCESSORIES.map(acc=>`<div class="option-pill ${a.accessories.includes(acc)?'selected':''}" onclick="toggleSpecialAcc('${acc}')">${acc}</div>`).join('')}</div>`;
+  }
+  return html;
+}
+function toggleSpecialCam(name){const idx=answers.special.cameras.indexOf(name);if(idx>=0)answers.special.cameras.splice(idx,1);else answers.special.cameras.push(name);renderStep();}
+function toggleSpecialAcc(name){const idx=answers.special.accessories.indexOf(name);if(idx>=0)answers.special.accessories.splice(idx,1);else answers.special.accessories.push(name);renderStep();}
+
+function renderDelivery(){
+  if(!answers.delivery)answers.delivery=['横屏 16:9'];
+  const a=answers.delivery;
+  return `<div class="option-row">${['横屏 16:9','竖屏 9:16','方屏 1:1'].map(f=>`<div class="option-pill ${a.includes(f)?'selected':''}" onclick="toggleDelivery('${f}')">${f}</div>`).join('')}</div>`;
+}
+function toggleDelivery(f){const idx=answers.delivery.indexOf(f);if(idx>=0)answers.delivery.splice(idx,1);else answers.delivery.push(f);renderStep();}
+
+function renderReview(){
+  const a=answers;
+  const camList=a.cameras.sameAsMain&&a.cameras.main?[`${a.cameras.main}×${a.project.cameras}`]:[a.cameras.main,...(a.cameras.secondary||[]).filter(c=>c)];
+  const isSony=CAMERA_OPTIONS.find(c=>c.name===a.cameras.main)?.brand==='Sony';
+  const lensInfo=[...(isSony?['大三元套装']:[]),...wizardLensItems().map(item=>`${item.name} × ${item.qty} 支`)].join('、')||'未选择';
+  let lightInfo=a.lighting.type;
+  if(a.lighting.type!=='自然光为主')lightInfo+='（'+(wizardLightItems().map(item=>`${item.role?item.role+'：':''}${item.name} × ${item.qty} ${LIGHT_EQUIPMENT.find(l=>l.name===item.name)?.unit||'台'}`).join('、')||'未选择灯具')+'）';
+  const audioInfo=wizardAudioItems().map(item=>`${item.name} × ${item.qty} ${item.unit}`).join('、')||'不需要';
+  let transInfo=a.transmission.need?`${a.transmission.sets}套`:'不需要';
+  if(a.transmission.rentalSets)transInfo+=`（增配${a.transmission.rentalSets}台监视器）`;
+  return `<div class="review-grid"><div class="title">${a.project.name||'未命名项目'}</div>
+  <div class="row"><span class="label">项目类型</span><span>${a.project.type}</span></div>
+  <div class="row"><span class="label">拍摄城市</span><span>${a.project.city||'未指定'}</span></div>
+  <div class="row"><span class="label">拍摄天数</span><span>${a.project.days}天</span></div>
+  <div class="row"><span class="label">机位数量</span><span>${a.project.cameras}个</span></div>
+  <div class="row"><span class="label">相机</span><span>${camList.join('、')}</span></div>
+  <div class="row"><span class="label">镜头</span><span>${escapeHTML(lensInfo)}</span></div>
+  <div class="row"><span class="label">稳定器</span><span>${a.stabilizer.need?a.stabilizer.type:'不需要'}</span></div>
+  <div class="row"><span class="label">脚架</span><span>${a.stabilizer.tripod.join('、')}</span></div>
+  <div class="row"><span class="label">图传</span><span>${transInfo}</span></div>
+  <div class="row"><span class="label">航拍</span><span>${a.drone.need?a.drone.type:'不需要'}</span></div>
+  <div class="row"><span class="label">灯光</span><span>${escapeHTML(lightInfo)}</span></div>
+  <div class="row"><span class="label">收音</span><span>${escapeHTML(audioInfo)}</span></div>
+  <div class="row"><span class="label">特殊机位</span><span>${a.special.need?a.special.cameras.join('、')+(a.special.accessories.length?' + '+a.special.accessories.join('、'):''):'不需要'}</span></div>
+  <div class="row"><span class="label">交付格式</span><span>${a.delivery.join('、')}</span></div>
+  </div><div style="text-align:center;margin-top:24px;color:var(--text-sec);font-size:14px;">点击"生成清单"开始生成设备清单</div>`;
+}
+
+// ===== 相机搜索下拉初始化 =====
+function initCameraSelects(){
+  initSingleSS('cam_main','main',false);
+  if(answers.project&&answers.project.cameras>1&&!answers.cameras.sameAsMain){
+    for(let i=0;i<answers.project.cameras-1;i++)initSingleSS('cam_sec'+i,'sec'+i,true,i);
+  }
+}
+function initSingleSS(elId,field,isArray,idx){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  let curVal;
+  if(isArray)curVal=answers.cameras.secondary[idx]||'';
+  else curVal=answers.cameras[field]||'';
+  el.innerHTML=`<div class="search-select-input" onclick="toggleSS('${elId}')"><span class="search-select-placeholder" style="${curVal?'color:var(--text)':''}">${curVal||'点击选择相机'}</span><span class="search-select-arrow">▾</span></div><div class="search-select-dropdown"><input type="text" class="search-select-search" placeholder="搜索相机型号..." oninput="filterSS('${elId}',this.value)"><div class="search-select-options"></div><div class="search-select-custom"><input type="text" placeholder="自定义型号" id="${elId}_custom"><button onclick="addCustomSS('${elId}','${elId}_custom',${isArray},${idx||0},'${field}')">+ 添加</button></div></div>`;
+  el._options=CAMERA_OPTIONS.slice();
+  renderSSOptions(elId,'');
+}
+function toggleSS(id){const el=document.getElementById(id);const inp=el.querySelector('.search-select-input');const dd=el.querySelector('.search-select-dropdown');const open=inp.classList.contains('open');document.querySelectorAll('.search-select-input.open').forEach(i=>{i.classList.remove('open');i.nextElementSibling.classList.remove('open');});if(!open){inp.classList.add('open');dd.classList.add('open');}}
+function filterSS(id,kw){renderSSOptions(id,kw);}
+function renderSSOptions(id,kw){
+  const el=document.getElementById(id);const opts=el._options||[];
+  const filtered=opts.filter(o=>o.name.toLowerCase().includes(kw.toLowerCase()));
+  const c=el.querySelector('.search-select-options');
+  if(!filtered.length){c.innerHTML='<div style="padding:12px;text-align:center;color:var(--text-thi);font-size:13px;">无匹配项，请在下方自定义添加</div>';return;}
+  c.innerHTML=filtered.map(o=>{const tag='';return `<div class="search-select-option" onclick="selectSS('${id}','${o.name.replace(/'/g,"\\'")}')"><span>${o.name}</span>${tag}</div>`;}).join('');
+}
+function selectSS(id,name){
+  const el=document.getElementById(id);const ph=el.querySelector('.search-select-placeholder');
+  ph.textContent=name;ph.style.color='var(--text)';
+  el.querySelector('.search-select-input').classList.remove('open');
+  el.querySelector('.search-select-dropdown').classList.remove('open');
+  // 判断是主机还是副机
+  if(id==='cam_main')answers.cameras.main=name;
+  else if(id.startsWith('cam_sec')){const idx=parseInt(id.replace('cam_sec',''));answers.cameras.secondary[idx]=name;}
+}
+function addCustomSS(id,inputId,isArray,idx,field){
+  const input=document.getElementById(inputId);const name=input.value.trim();if(!name)return;
+  const el=document.getElementById(id);el._options.push({name});
+  selectSS(id,name);input.value='';renderSSOptions(id,'');
+}
+
+// ===== 向导导航 =====
+function nextStep(){
+  if(!validateStep())return;
+  if(currentStep===STEPS.length-1){generateList();return;}
+  currentStep++;renderStep();focusMobileStep();
+}
+function prevStep(){if(currentStep>0){currentStep--;renderStep();focusMobileStep();}}
+function focusMobileStep(){
+  if(!window.matchMedia('(max-width:960px)').matches)return;
+  const title=document.getElementById('stepQuestion');
+  title.tabIndex=-1;title.focus({preventScroll:true});
+  document.querySelector('.wizard-header').scrollIntoView({block:'start',behavior:'instant'});
+}
+function validateStep(){
+  if(currentStep===0){if(!answers.project.name){showToast('请输入项目名称');return false;}if(!answers.project.city){showToast('请选择拍摄城市');return false;}}
+  if(currentStep===1){if(!answers.cameras.main){showToast('请选择主机位相机');return false;}if(!answers.cameras.sameAsMain){for(let i=0;i<answers.project.cameras-1;i++){if(!answers.cameras.secondary[i]){showToast(`请选择副机位 ${i+1} 相机`);return false;}}}}
+  const section=STEPS[currentStep].id;
+  if(['lens','lighting','audio','review'].includes(section)){
+    const error=wizardEquipmentError(section==='review'?undefined:section);
+    if(error){showToast(error);return false;}
+  }
+  return true;
+}
+
+// ===== 生成设备清单 =====
+function generateList(){
+  const error=wizardEquipmentError();
+  if(error){showToast(error);return;}
+  const a=answers,result=[];let id=1;
+  const days=a.project.days,cameras=a.project.cameras;
+  const camList=[a.cameras.main];
+  if(cameras>1){if(a.cameras.sameAsMain){for(let i=1;i<cameras;i++)camList.push(a.cameras.main);}else{camList.push(...(a.cameras.secondary||[]).filter(c=>c));}}
+  const mainCam=camList[0]||'';
+  const camOpt=CAMERA_OPTIONS.find(c=>c.name===mainCam);
+  const isSony=camOpt&&camOpt.brand==='Sony';
+  let hasExtraLens=false;
+
+  // 相机&配件
+  camList.forEach((camName,idx)=>{
+    const opt=CAMERA_OPTIONS.find(o=>o.name===camName)||{};
+    const pi=getPrice(opt.priceKey);
+    result.push({id:id++,section:'相机&配件',cat:'主机',name:camName,qty:1,unit:'台',spec:'',remark:idx===0?'主机位':'副机位'+idx,source:'待确认',priceKey:opt.priceKey||'',unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  });
+  // 电池（一天一台5块）
+  const sonyCams=camList.filter(c=>c.includes('FX3')||c.includes('A7')||c.includes('FX30'));
+  if(sonyCams.length){
+    result.push({id:id++,section:'相机&配件',cat:'配件',name:'相机电池FZ-100',qty:sonyCams.length*5,unit:'块',spec:'出行前核对电池标识及承运要求',remark:sonyCams.length+'台×5块/天',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    result.push({id:id++,section:'相机&配件',cat:'配件',name:'FZ100双充充电器',qty:Math.ceil(sonyCams.length/2),unit:'个',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+  // 存储卡（一台两张A卡）
+  if(sonyCams.length){
+    result.push({id:id++,section:'相机&配件',cat:'存储',name:'高速卡160G',qty:sonyCams.length*2,unit:'张',spec:'A卡',remark:sonyCams.length+'台×2张',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+  // 特殊机位
+  if(a.special.need){
+    a.special.cameras.forEach(camName=>{
+      const opt=SPECIAL_CAMERA_OPTIONS.find(c=>c.name===camName)||{};
+      const pi=getPrice(opt.priceKey);
+      let remark='';
+      if(a.special.accessories.length)remark='配件：'+a.special.accessories.join('、');
+      result.push({id:id++,section:'相机&配件',cat:'特殊机位',name:camName,qty:1,unit:'套',spec:'',remark,source:'待确认',priceKey:opt?opt.priceKey||'':'',unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    });
+  }
+
+  // 镜头&滤镜
+  if(isSony){
+    const lensData=[{name:'索尼16-35 GM II',priceKey:'索尼16-35mm f2.8 GM 二代'},{name:'索尼24-70 GM II',priceKey:'索尼24-70mm f2.8 GM 二代'},{name:'索尼70-200 GM II',priceKey:''}];
+    lensData.forEach(l=>{const pi=getPrice(l.priceKey);result.push({id:id++,section:'镜头&滤镜',cat:'镜头',name:l.name,qty:1,unit:'个',spec:'',remark:'大三元套装',source:'待确认',priceKey:l.priceKey,unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});});
+  }
+  const extraLenses=wizardLensItems();
+  if(extraLenses.length){
+    hasExtraLens=true;
+    extraLenses.forEach(({name:lensName,qty})=>{
+      const opt=LENS_OPTIONS.find(l=>l.name===lensName);
+      const pi=getPrice(opt?opt.priceKey:'');
+      result.push({id:id++,section:'镜头&滤镜',cat:'镜头',name:lensName,qty,unit:'支',spec:'',remark:'',source:'待确认',priceKey:opt?opt.priceKey||'':'',unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    });
+  }
+  // ND滤镜（2机位配77+82各一块）
+  if(cameras>=2){
+    result.push({id:id++,section:'镜头&滤镜',cat:'滤镜',name:'可变ND滤镜77mm',qty:1,unit:'张',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    result.push({id:id++,section:'镜头&滤镜',cat:'滤镜',name:'可变ND滤镜82mm',qty:1,unit:'张',spec:'',remark:'',source:'待确认',priceKey:'82mmND+转接环',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }else{
+    result.push({id:id++,section:'镜头&滤镜',cat:'滤镜',name:'可变ND滤镜82mm',qty:1,unit:'张',spec:'',remark:'',source:'待确认',priceKey:'82mmND+转接环',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+  // 有额外镜头需转接环
+  if(hasExtraLens){
+    result.push({id:id++,section:'镜头&滤镜',cat:'配件',name:'滤镜转接环',qty:1,unit:'套',spec:'',remark:'配合非大三元镜头使用',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+
+  // 移动&稳定设备
+  if(a.stabilizer.need){
+    if(a.stabilizer.type==='大疆RS4 PRO'){
+      result.push({id:id++,section:'移动&稳定设备',cat:'稳定器',name:'大疆RS4 PRO',qty:Math.ceil(cameras/2),unit:'套',spec:'',remark:'带提壶',source:'待确认',priceKey:'大疆 RS4 PRO',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    }else{
+      result.push({id:id++,section:'移动&稳定设备',cat:'稳定器',name:a.stabilizer.type,qty:Math.ceil(cameras/2),unit:'套',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    }
+  }
+  // 脚架
+  a.stabilizer.tripod.forEach(t=>{
+    if(t==='大脚架'){const pi=getPrice('图瑞思脚架N6t plus碳纤维');result.push({id:id++,section:'移动&稳定设备',cat:'支撑设备',name:'图瑞思脚架N6t plus碳纤维',qty:1,unit:'个',spec:'',remark:'',source:'待确认',priceKey:'图瑞思脚架N6t plus碳纤维',unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});}
+    else if(t==='mini'){result.push({id:id++,section:'移动&稳定设备',cat:'支撑设备',name:'小脚架',qty:cameras,unit:'个',spec:'',remark:'请核对快装板与机身接口',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});}
+    else if(t==='独脚架'){result.push({id:id++,section:'移动&稳定设备',cat:'支撑设备',name:'松塔独脚架碳纤维2.0脚踏版',qty:1,unit:'个',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});}
+  });
+
+  // 收音设备
+  wizardAudioItems().forEach(item=>{
+    result.push({id:id++,section:'收音设备',cat:'音频配件',name:item.outputName||item.name,qty:item.qty,unit:item.unit,spec:'',remark:item.remark||'',source:'待确认',priceKey:item.priceKey||'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  });
+
+  // 图传&监视器
+  if(a.transmission.need){
+    result.push({id:id++,section:'图传&监视器',cat:'监视器',name:'猛犸监视器',qty:1,unit:'个',spec:'',remark:'一发一收',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    result.push({id:id++,section:'图传&监视器',cat:'配件',name:'HDMI图传线',qty:a.transmission.sets,unit:'条',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+    if(a.transmission.rentalSets>=1){result.push({id:id++,section:'图传&监视器',cat:'监视器',name:'猛犸M1监视器',qty:a.transmission.rentalSets,unit:'个',spec:'',remark:'增配监视器',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});}
+    // 图传需要怪手和HDMI连接线
+    result.push({id:id++,section:'图传&监视器',cat:'配件',name:'怪手',qty:a.transmission.sets,unit:'个',spec:'',remark:'固定监视器用',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+
+  // 航拍
+  if(a.drone.need&&a.drone.type){
+    const opt=DRONE_OPTIONS.find(d=>d.name===a.drone.type);
+    result.push({id:id++,section:'其他',cat:'航拍',name:a.drone.type,qty:1,unit:'台',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  }
+
+  // 灯光
+  wizardLightItems().forEach(item=>{
+    const opt=LIGHT_EQUIPMENT.find(l=>l.name===item.name),pi=getPrice(opt?.priceKey);
+    result.push({id:id++,section:'其他',cat:'灯光',name:item.name,qty:item.qty,unit:opt?.unit||'台',spec:item.role,remark:item.remark||'',source:'待确认',priceKey:opt?.priceKey||'',unitPrice:pi?pi.unit_price:0,pricingType:pi?pi.pricing_type:'天',vendor:pi?pi.vendor:'',inquiryStatus:'待询价',actualPrice:0});
+  });
+
+  // 通用配件
+  result.push({id:id++,section:'其他',cat:'配件',name:'双肩背包',qty:1,unit:'个',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0});
+
+  currentData=result;
+  generatedData=JSON.parse(JSON.stringify(result));
+  saveProjectToHistory();
+  showPreview();
+}
+
+function showPreview(){
+  showPage('preview');
+  document.getElementById('exportTotalBtn').style.display='inline-flex';
+  document.getElementById('exportCompanyBtn').style.display='inline-flex';
+  document.getElementById('exportRentalBtn').style.display='inline-flex';
+  const project=answers.project||{};
+  document.getElementById('previewTitle').textContent=project.name||'未命名项目';
+  document.getElementById('previewMeta').textContent=[project.type,project.city,`${project.days||1} 天拍摄`,project.cameras?`${project.cameras} 个机位`:''].filter(Boolean).join(' · ');
+  document.getElementById('editToggleBtn').textContent=editMode?'完成编辑':'编辑清单';
+  document.getElementById('editToggleBtn').classList.toggle('btn-success',editMode);
+  document.getElementById('editToggleBtn').classList.toggle('btn-secondary',!editMode);
+  switchTab('total');updateStats();
+  showToast('已生成 '+currentData.length+' 项设备');
+}
+
+function startNewProject(){
+  currentStep=0;answers={};currentData=[];generatedData=[];editMode=false;
+  document.getElementById('editToggleBtn').textContent='编辑清单';
+  showPage('wizard');
+  renderStep();
+}
+function toggleHistory(){
+  const panel=document.getElementById('historyPanel');
+  panel.hidden=false;
+  renderHistory();
+  panel.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+}
+function saveProjectToHistory(){
+  if(!answers.project||!currentData.length)return;
+  try{
+    const history=JSON.parse(localStorage.getItem('equipment-list-generator-history-v1')||'[]');
+    if(!Array.isArray(history))throw new Error('历史数据格式异常');
+    const id=answers.importMeta?answers.importMeta.historyId:(answers.historyId||(answers.historyId=Date.now()));
+    const record={id,name:answers.project.name||'未命名项目',type:answers.project.type||'',city:answers.project.city||'',days:answers.project.days||1,createdAt:new Date().toLocaleString('zh-CN'),answers:JSON.parse(JSON.stringify(answers)),data:JSON.parse(JSON.stringify(currentData))};
+    record.generatedData=JSON.parse(JSON.stringify(generatedData));
+    const remaining=history.filter(i=>i.id!==id);
+    remaining.unshift(record);
+    localStorage.setItem('equipment-list-generator-history-v1',JSON.stringify(remaining.slice(0,20)));
+    syncCleanImportDraft();
+  }catch(e){showToast('未能保存历史，请先导出清单。'+e.message);}
+}
+function renderHistory(){
+  const history=JSON.parse(localStorage.getItem('equipment-list-generator-history-v1')||'[]');
+  const list=document.getElementById('historyList');
+  if(!history.length){list.innerHTML='<div class="history-empty">还没有历史项目。完成一次清单生成后，项目会自动保存在这里。</div>';return;}
+  list.innerHTML=history.map(item=>'<button class="history-item" onclick="loadHistory('+item.id+')"><div><strong>'+escapeHTML(item.name)+'</strong><span>'+escapeHTML(item.type)+' · '+escapeHTML(item.city)+' · '+item.days+'天 · '+escapeHTML(item.createdAt)+'</span></div><div class="history-arrow">→</div></button>').join('');
+}
+function loadHistory(id){
+  const history=JSON.parse(localStorage.getItem('equipment-list-generator-history-v1')||'[]');
+  const item=history.find(i=>i.id===id);if(!item)return;
+  answers=JSON.parse(JSON.stringify(item.answers));currentData=JSON.parse(JSON.stringify(item.data));generatedData=JSON.parse(JSON.stringify(item.generatedData||item.data));currentStep=0;editMode=false;
+  showPage('preview');
+  showPreview();
+  showToast('已载入历史项目');
+}
+function clearHistory(){
+  localStorage.removeItem('equipment-list-generator-history-v1');renderHistory();
+}
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
+
+// ===== 页面管理 =====
+function setMobileNav(open,restoreFocus=false){
+  const button=document.getElementById('mobileNavToggle');
+  const navbar=document.querySelector('.navbar');
+  navbar.classList.toggle('is-open',open);
+  navbar.style.setProperty('--mobile-nav-height',navbar.getBoundingClientRect().height+'px');
+  button.setAttribute('aria-expanded',String(open));
+  button.querySelector('span').textContent=open?'收起':'菜单';
+  if(restoreFocus&&window.matchMedia('(max-width:960px)').matches)button.focus({preventScroll:true});
+}
+
+function showPage(page){
+  document.body.dataset.page=page;
+  setMobileNav(false,document.getElementById('navPanel').contains(document.activeElement));
+  const labels={home:'项目工作台',wizard:'新建清单',import:'粘贴清单',preview:'设备清单'};
+  document.getElementById('pageLabel').textContent=labels[page]||'项目工作台';
+  document.querySelectorAll('.nav-item[data-page]').forEach(el=>{const active=el.dataset.page===page||(page==='preview'&&el.dataset.page===(answers.importMeta?'import':'wizard'));el.classList.toggle('active',active);if(active)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');});
+  const pages=['homeView','wizardView','importView','previewView'];
+  pages.forEach(p=>{const el=document.getElementById(p);if(el)el.style.display='none';});
+  document.getElementById('exportTotalBtn').style.display='none';
+  document.getElementById('exportCompanyBtn').style.display='none';
+  document.getElementById('exportRentalBtn').style.display='none';
+  if(page==='home'){document.getElementById('homeView').style.display='block';renderHistory();}
+  else if(page==='wizard'){document.getElementById('wizardView').style.display='';}
+  else if(page==='import'){document.getElementById('importView').style.display='block';}
+  else if(page==='preview'){document.getElementById('previewView').style.display='block';}
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+function restartWizard(){
+  startNewProject();
+}
+
+// ===== 编辑模式 =====
+function toggleEditMode(){
+  if(editMode&&answers.importMeta){const error=importValidation(currentData,answers.project.days);if(error){showToast(error);return;}}
+  editMode=!editMode;
+  if(editMode)switchTab('total');
+  document.getElementById('editToggleBtn').textContent=editMode?'完成编辑':'编辑清单';
+  document.getElementById('editToggleBtn').classList.toggle('btn-success',editMode);
+  document.getElementById('editToggleBtn').classList.toggle('btn-secondary',!editMode);
+  if(!editMode){
+    // 退出编辑时重新计算统计
+    updateStats();
+    saveProjectToHistory();
+  }
+  renderTable();
+}
+
+function setItemSource(item,source){
+  item.source=source;
+  if(source==='租赁'&&!item.unitPrice&&item.priceKey){
+    const pi=getPrice(item.priceKey);
+    if(pi){item.unitPrice=pi.unit_price;item.pricingType=pi.pricing_type;item.vendor=pi.vendor;}
+  }
+}
+
+function updateField(id,field,value){
+  const item=currentData.find(i=>i.id===id);
+  if(item){
+    const previousName=item.name;
+    if(answers.importMeta)Object.assign(item,changeImportedItem(item,field,value));
+    else item[field]=value;
+    if(answers.importMeta&&field==='name')invalidateImportCameraContext(currentData,previousName,value);
+    if(field==='source')setItemSource(item,value);
+    updateStats();
+    if(field==='source')renderTable();
+  }
+}
+
+function deleteRow(id){
+  const previousName=currentData.find(i=>i.id===id)?.name||'';
+  currentData=currentData.filter(i=>i.id!==id);
+  if(answers.importMeta)invalidateImportCameraContext(currentData,previousName,'');
+  renderTable();updateStats();
+  showToast('已删除');
+}
+
+function addRow(){
+  const newId=currentData.length>0?Math.max(...currentData.map(i=>i.id))+1:1;
+  currentData.push({id:newId,section:'其他',cat:'配件',name:'新设备',qty:1,unit:'个',spec:'',remark:'',source:'待确认',priceKey:'',unitPrice:0,pricingType:'天',vendor:'',inquiryStatus:'待询价',actualPrice:0,raw:'手动添加',line:0,issues:[],suggestions:[],confirmed:false});
+  renderTable();updateStats();
+  showToast('已添加设备');
+}
+
+function resetToGenerated(){
+  if(!generatedData.length){showToast('无生成数据可恢复');return;}
+  currentData=JSON.parse(JSON.stringify(generatedData));
+  renderTable();updateStats();
+  showToast('已恢复到生成结果');
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  ['tabTotal','tabCompany','tabRental'].forEach(t=>document.getElementById(t).classList.toggle('active',t===('tab'+tab.charAt(0).toUpperCase()+tab.slice(1))));
+  renderTable();
+}
+
+function getCompanyData(){return currentData.filter(i=>i.source==='公司');}
+function getRentalData(){return currentData.filter(i=>i.source==='租赁');}
+function calcAmount(item,days){if(!item.unitPrice)return 0;if(item.pricingType==='天')return item.qty*item.unitPrice*days;if(item.pricingType==='次')return item.qty*item.unitPrice;return item.qty*item.unitPrice;}
+
+function formatMoney(value){return '¥'+Number(value||0).toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function sourceBadge(source){return '<span class="source-badge '+(source==='公司'?'source-company':source==='租赁'?'source-rental':'source-pending')+'">'+escapeHTML(source)+'</span>';}
+
+// Reuse the same table and controls on mobile; only presentation and labels change.
+function prepareMobileTable(container,titleColumn,wideColumns){
+  const table=container.querySelector('table');
+  if(!table)return;
+  table.closest('.table-wrap').classList.add('mobile-records');
+  table.setAttribute('role','table');
+  table.querySelectorAll('thead,tbody').forEach(group=>group.setAttribute('role','rowgroup'));
+  table.querySelectorAll('tr').forEach(row=>row.setAttribute('role','row'));
+  const headers=Array.from(table.querySelectorAll('thead th'),th=>{
+    th.setAttribute('role','columnheader');th.setAttribute('scope','col');
+    return th.textContent.trim();
+  });
+  table.querySelectorAll('tbody td').forEach(cell=>cell.setAttribute('role','cell'));
+  table.querySelectorAll('.data-row').forEach(row=>{
+    Array.from(row.cells).forEach((cell,index)=>{
+      cell.dataset.label=headers[index];
+      cell.classList.toggle('mobile-record-title',index===titleColumn);
+      cell.classList.toggle('mobile-record-wide',wideColumns.includes(index));
+    });
+  });
+}
+
+function renderTable(){
+  const c=document.getElementById('tableContainer');
+  const days=answers.project?answers.project.days:1;
+  let toolbar='';
+  if(editMode){toolbar='<div class="edit-toolbar"><div class="info">'+(currentTab==='total'?'编辑模式 · 修改明细后自动更新统计':'编辑模式 · 请在设备总表中修改明细')+'</div><div class="actions"><button class="btn btn-secondary" onclick="addRow();switchTab(\'total\')">＋ 添加设备</button><button class="btn btn-secondary" onclick="resetToGenerated()">恢复生成结果</button></div></div>';}
+  const table=currentTab==='company'?renderCompanyTable():currentTab==='rental'?renderRentalTable(days):renderTotalTable();
+  const imported='<div class="import-preview-tools">'+(answers.importMeta?'<button class="btn btn-secondary" onclick="reopenImportReview()">返回识别核对</button>':'')+'<label for="previewBatchSource">批量来源</label><select class="form-select" id="previewBatchSource"><option>待确认</option><option>公司</option><option>租赁</option></select><button class="btn btn-secondary" onclick="setPreviewSources()">应用到全部</button></div><p id="importPreviewNotice" class="import-notice" aria-live="polite"></p>'+(answers.importMeta?'<details class="import-details"><summary>查看导入原文与项目备注</summary><div class="import-raw">'+escapeHTML(answers.importMeta.raw)+(answers.project.notes?'\n\n项目备注：'+escapeHTML(answers.project.notes):'')+'</div></details>':'');
+  c.innerHTML=imported+toolbar+'<div class="table-wrap" tabindex="0" role="region" aria-label="设备清单表格">'+table+'</div>';
+  prepareMobileTable(c,1,[1,4,5,9,...(editMode&&currentTab==='total'?[7]:[])]);
+  if(currentTab==='rental'&&getRentalData().length&&PRICE_DB.vendors.length){const v=PRICE_DB.vendors[0];c.innerHTML+='<div class="price-info"><strong>'+escapeHTML(v.brand)+'</strong> · '+escapeHTML(v.name)+' · '+escapeHTML(v.contact)+'</div>';}
+  updateImportPreviewNotice();
+}
+function updateImportPreviewNotice(){
+  const notice=document.getElementById('importPreviewNotice');if(!notice)return;
+  const summary=importSummary();
+  notice.textContent=[summary.pending?summary.pending+' 项来源待确认：仅列入总表，未计入公司表与询价单':'全部设备已指定来源',summary.issues?summary.issues+' 项识别疑点尚未确认，可返回核对':'',summary.unpriced?summary.unpriced+' 项租赁设备待询价；汇总仅含已知参考价':''].filter(Boolean).join('。');
+}
+
+function renderTotalTable(){return renderEquipmentTable(currentData,false,editMode);}
+function renderCompanyTable(){return renderEquipmentTable(getCompanyData(),false,false);}
+function renderRentalTable(days){return renderEquipmentTable(getRentalData(),true,false,days);}
+
+function renderEquipmentTable(data,rental,editable,days=1){
+  if(!data.length)return '<div class="table-empty">'+(currentTab==='company'?'这份清单没有公司设备':currentTab==='rental'?'这份清单没有租赁设备':'清单暂无设备，可在编辑模式下添加设备或恢复生成结果')+'</div>';
+  const headers=['设备类别','设备名称','数量','单位','配置要求','备注说明',...(rental?['参考单价','计价','预计金额','设备商']:['来源']),...(editable?['操作']:[])];
+  let html='<table class="equipment-table '+(rental?'rental-table':'')+'"><thead><tr>'+headers.map((h,i)=>'<th scope="col" class="'+([2,3,6,7,8].includes(i)?'center':'')+'">'+h+'</th>').join('')+'</tr></thead><tbody>';
+  let total=0;
+  for(const sec of SECTION_ORDER){
+    const items=data.filter(i=>i.section===sec);if(!items.length)continue;
+    html+='<tr class="section-row"><td colspan="'+headers.length+'">'+escapeHTML(sec)+'<span class="section-count">'+items.length+' 项设备</span></td></tr>';
+    items.forEach(it=>{
+      if(editable){
+        const fields=['cat','name','qty','unit','spec','remark'];
+        html+='<tr class="data-row">'+fields.map((field,i)=>'<td class="'+([2,3].includes(i)?'center':'')+'"><input aria-label="'+headers[i]+'" type="'+(field==='qty'?'number':'text')+'" '+(field==='qty'?'min="1" ':'')+'value="'+escapeHTML(it[field])+'" onchange="updateField('+it.id+',\''+field+'\','+(field==='qty'?(answers.importMeta?'Number(this.value)':'Math.max(1,parseInt(this.value)||1)'):'this.value')+')"></td>').join('');
+        html+='<td class="center"><select aria-label="设备来源" onchange="updateField('+it.id+',\'source\',this.value)">'+('<option '+(it.source==='待确认'?'selected':'')+'>待确认</option>')+'<option '+(it.source==='公司'?'selected':'')+'>公司</option><option '+(it.source==='租赁'?'selected':'')+'>租赁</option></select></td><td><div class="row-actions"><button class="row-action-btn danger" title="删除设备" aria-label="删除'+escapeHTML(it.name)+'" onclick="deleteRow('+it.id+')">×</button></div></td></tr>';
+      }else{
+        html+='<tr class="data-row"><td>'+escapeHTML(it.cat)+'</td><td>'+escapeHTML(it.name)+'</td><td class="center">'+it.qty+'</td><td class="center">'+escapeHTML(it.unit)+'</td><td>'+escapeHTML(it.spec||'—')+'</td><td>'+escapeHTML(importItemRemark(it)||'—')+'</td>';
+        if(rental){const amt=calcAmount(it,days);total+=amt;const unpriced=isUnpriced(it);html+='<td class="right">'+(unpriced?'待询价':it.unitPrice>0?formatMoney(it.unitPrice):'—')+'</td><td class="center">'+escapeHTML(it.pricingType)+'</td><td class="right">'+(unpriced?'待询价':amt>0?formatMoney(amt):'—')+'</td><td>'+escapeHTML(it.vendor||'—')+'</td>';}
+        else html+='<td class="center">'+sourceBadge(it.source)+'</td>';
+        html+='</tr>';
+      }
+    });
+  }
+  if(rental)html+='<tr class="summary-row"><td colspan="8" class="right">预计租赁总额（'+days+' 天）</td><td class="right amount">'+formatMoney(total)+'</td><td>'+(data.some(isUnpriced)?'仅含已知价格；有设备待询价':'参考金额')+'</td></tr>';
+  return html+'</tbody></table>';
+}
+
+function updateStats(){
+  const t=currentData.length,c=getCompanyData().length,r=getRentalData().length;
+  const days=answers.project?answers.project.days:1;
+  let cost=0;getRentalData().forEach(it=>cost+=calcAmount(it,days));
+  document.getElementById('statTotal').textContent=t;
+  document.getElementById('statCompany').textContent=c;
+  document.getElementById('statRental').textContent=r;
+  document.getElementById('statCost').textContent=formatMoney(cost);
+  document.getElementById('badgeTotal').textContent=t;
+  document.getElementById('badgeCompany').textContent=c;
+  document.getElementById('badgeRental').textContent=r;
+  updateImportPreviewNotice();
+}
+
+// ===== Excel 导出 =====
+function exportExcel(type){
+  if(!currentData.length){showToast('请先生成设备清单');return;}
+  {
+    const error=importValidation(currentData,answers.project.days);if(error){showToast(error);return;}
+    const summary=importSummary();
+    if(type!=='total'&&summary.pending&&!confirm(summary.pending+' 项设备来源未确认，仅会出现在总表中，不会进入公司表和询价单。继续导出？'))return;
+    saveProjectToHistory();
+  }
+  if(typeof XLSX==='undefined'){showToast('导出组件尚未加载，请联网后刷新页面');return;}
+  const project=answers.project||{};
+  const date=new Date().toLocaleDateString('sv-SE');
+  const sheets=[{type:'total',title:'设备总表',data:currentData},{type:'company',title:'公司设备表',data:getCompanyData()},{type:'rental',title:'租赁询价单',data:getRentalData()}];
+  const selected=sheets.filter(s=>type==='all'||s.type===type);
+  if(type!=='all'&&selected.length&&!selected[0].data.length){showToast('无'+(type==='company'?'公司':'租赁')+'设备可导出');return;}
+  const wb=XLSX.utils.book_new();
+  selected.forEach(s=>XLSX.utils.book_append_sheet(wb,buildEquipmentSheet(s.data,s.title,s.type==='rental',project,date),s.title));
+  const suffixMap={total:'设备总表',company:'公司设备表',rental:'租赁询价单',all:'设备清单'};
+  const fileName=(project.name||'设备清单')+'_'+(suffixMap[type]||'设备清单')+'_'+date+'.xlsx';
+  XLSX.writeFile(wb,fileName);
+  showToast('已导出：'+fileName);
+}
+
+function buildEquipmentSheet(data,title,isRental,project,date){
+  const days=project.days||1;
+  const headers=['设备类别','设备名称','数量','单位','配置要求','备注说明',...(isRental?['参考单价','计价方式','预计金额','设备商','询价状态','实际报价']:['来源'])];
+  const count=headers.length;
+  const padded=(value)=>[value,...Array(count-1).fill('')];
+  const metadata=[project.type,project.city,`拍摄 ${days} 天`,project.cameras?`${project.cameras} 个机位`:'',`导出日期 ${date}`,project.notes?'项目备注：'+project.notes:''].filter(Boolean).join('    /    ');
+  const aoa=[padded((project.name||'未命名项目')+' · '+title),padded(metadata),padded(''),headers];
+  const rowTypes=['title','meta','space','header'];
+  const merges=[{s:{r:0,c:0},e:{r:0,c:count-1}},{s:{r:1,c:0},e:{r:1,c:count-1}}];
+  let total=0;
+  for(const sec of SECTION_ORDER){
+    const items=data.filter(i=>i.section===sec);if(!items.length)continue;
+    const row=aoa.length;
+    aoa.push(padded(sec+'    /    '+items.length+' 项设备'));rowTypes.push('section');
+    merges.push({s:{r:row,c:0},e:{r:row,c:count-1}});
+    items.forEach(it=>{
+      const values=[it.cat,it.name,it.qty,it.unit,it.spec,importItemRemark(it)];
+      if(isRental){const amount=calcAmount(it,days);total+=amount;const unpriced=isUnpriced(it);values.push(unpriced?'待询价':it.unitPrice||'',it.pricingType,unpriced?'待询价':amount||'',it.vendor||'','待询价','');}
+      else values.push(it.source);
+      aoa.push(values);rowTypes.push('data');
+    });
+  }
+  if(!data.length){const row=aoa.length;aoa.push(padded('本项目无'+(isRental?'租赁':'公司')+'设备'));rowTypes.push('empty');merges.push({s:{r:row,c:0},e:{r:row,c:count-1}});}
+  if(isRental){
+    const row=aoa.length;
+    // 合并范围的文字放在左上角，避免 Excel 隐藏“预计总额”。
+    aoa.push(['预计租赁总额（'+days+' 天）','','','','','','','',total,data.some(isUnpriced)?'仅含已知价格；'+data.filter(isUnpriced).length+'项待询价':'已知参考金额','','']);rowTypes.push('total');
+    merges.push({s:{r:row,c:0},e:{r:row,c:7}},{s:{r:row,c:9},e:{r:row,c:11}});
+  }
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws['!cols']=(isRental?[13,29,8,8,38,30,14,11,16,30,13,16]:[13,29,8,8,38,30,12]).map(wch=>({wch}));
+  ws['!merges']=merges;
+  ws['!margins']={left:.3,right:.3,top:.45,bottom:.45,header:.2,footer:.2};
+  applyStyles(ws,aoa,rowTypes,isRental);
+  return ws;
+}
+
+function applyStyles(ws,aoa,rowTypes,isRental){
+  const colors={ink:'26292E',muted:'62666E',green:'2C2F34',dark:'202226',pale:'E8ECF1',line:'E1E6ED'};
+  const line={style:'thin',color:{rgb:colors.line}};
+  const moneyFormat='"¥"#,##0.00;[Red]-"¥"#,##0.00;"¥"0.00';
+  let stripe=0;
+  ws['!rows']=[];
+  aoa.forEach((row,r)=>{
+    const kind=rowTypes[r];
+    let height=30;
+    if(kind==='title')height=42;
+    else if(kind==='meta')height=30;
+    else if(kind==='space')height=10;
+    else if(kind==='section'){height=27;stripe=0;}
+    else if(kind==='total')height=36;
+    else if(kind==='data'){
+      const wrapped=row.map((value,c)=>{const width=Math.max(4,ws['!cols'][c].wch-3);return String(value??'').split('\n').reduce((lines,text)=>lines+Math.max(1,Math.ceil(Array.from(text).reduce((n,ch)=>n+(ch.charCodeAt(0)>255?2:1),0)/width)),0);});
+      height=Math.max(32,Math.max(...wrapped)*15+12);
+    }
+    if(kind==='title'||kind==='meta'){
+      const totalWidth=ws['!cols'].reduce((n,col)=>n+col.wch,0)-8;
+      const units=Array.from(String(row[0])).reduce((n,ch)=>n+(ch.charCodeAt(0)>255?2:1),0);
+      height=Math.max(height,Math.ceil(units*(kind==='title'?1.6:1)/totalWidth)*22+14);
+    }
+    ws['!rows'].push({hpt:Math.min(409,height)});
+    row.forEach((value,c)=>{
+      const addr=XLSX.utils.encode_cell({r,c});
+      if(!ws[addr])ws[addr]={t:'s',v:''};
+      const cell=ws[addr];
+      let style={font:{name:'微软雅黑',sz:10,color:{rgb:colors.ink}},fill:{fgColor:{rgb:kind==='data'&&stripe%2?'F9FBFD':'FFFFFF'}},alignment:{horizontal:[2,3].includes(c)?'center':'left',vertical:'center',wrapText:true},border:{bottom:line}};
+      if(kind==='title')style={font:{name:'微软雅黑',sz:18,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:colors.dark}},alignment:{horizontal:'left',vertical:'center',wrapText:true,indent:1}};
+      else if(kind==='meta')style={font:{name:'微软雅黑',sz:10,color:{rgb:colors.muted}},fill:{fgColor:{rgb:'F2F4F6'}},alignment:{vertical:'center',wrapText:true,indent:1}};
+      else if(kind==='space')style={fill:{fgColor:{rgb:'FFFFFF'}}};
+      else if(kind==='header')style={font:{name:'微软雅黑',sz:10,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:colors.green}},alignment:{horizontal:[2,3,6,7,8,10,11].includes(c)?'center':'left',vertical:'center',wrapText:true},border:{bottom:line}};
+      else if(kind==='section')style={font:{name:'微软雅黑',sz:10,bold:true,color:{rgb:colors.green}},fill:{fgColor:{rgb:colors.pale}},alignment:{horizontal:'left',vertical:'center',indent:1},border:{bottom:line}};
+      else if(kind==='empty')style.font.color={rgb:colors.muted};
+      else if(kind==='total')style={font:{name:'微软雅黑',sz:c===8?14:11,bold:true,color:{rgb:colors.dark}},fill:{fgColor:{rgb:'E4EAF2'}},alignment:{horizontal:c===8?'right':'left',vertical:'center',wrapText:true,indent:c===8?0:1},border:{top:{style:'thin',color:{rgb:'B7C4D5'}}}};
+      if(kind==='data'){
+        if(c===1)style.font.bold=true;
+        if(c===4||c===5||c===9)style.font.color={rgb:colors.muted};
+        if(!isRental&&c===6){style.font.color={rgb:value==='公司'?'347253':'9A651E'};style.alignment.horizontal='center';}
+        if(isRental&&[6,8,11].includes(c)){style.numFmt=moneyFormat;cell.z=moneyFormat;style.alignment.horizontal='right';}
+        if(isRental&&[7,10].includes(c))style.alignment.horizontal='center';
+      }
+      if(kind==='total'&&c===8){style.numFmt=moneyFormat;cell.z=moneyFormat;}
+      cell.s=style;
+    });
+    if(kind==='data')stripe++;
+  });
+}
+
+// 点击外部关闭下拉
+document.addEventListener('click',e=>{if(!e.target.closest('.search-select')){document.querySelectorAll('.search-select-input.open').forEach(i=>{i.classList.remove('open');i.nextElementSibling.classList.remove('open');});}});
+
+// 初始化
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const navbar=document.querySelector('.navbar');
+  document.getElementById('navPanel').addEventListener('click',e=>{
+    if(e.target.closest('button')&&window.matchMedia('(max-width:960px)').matches)setMobileNav(false,true);
+  },true);
+  document.addEventListener('click',e=>{
+    if(!navbar.contains(e.target)&&navbar.classList.contains('is-open'))setMobileNav(false,navbar.contains(document.activeElement));
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&navbar.classList.contains('is-open')){setMobileNav(false,true);e.preventDefault();}
+  });
+  navbar.addEventListener('focusout',e=>{
+    if(e.relatedTarget&&!navbar.contains(e.relatedTarget))setMobileNav(false);
+  });
+  window.matchMedia('(max-width:960px)').addEventListener('change',()=>setMobileNav(false,document.getElementById('navPanel').contains(document.activeElement)));
+  document.getElementById('workspaceDate').textContent=new Date().toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+  renderHistory();
+  renderStep();
+  document.getElementById('wizardBody').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.option-pill,.tag-item,.number-option')){e.preventDefault();e.target.click();}});
+});
+</script>
+</body>
+</html>
